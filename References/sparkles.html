@@ -1,0 +1,459 @@
+<!-- Sparkles Animation - Matches Course Cards Design System -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sparkles Effect</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .sparkle-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 400px;
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    #sparkle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .content-overlay {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .content-overlay h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .content-overlay p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 500px;
+    }
+
+    /* Demo controls */
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .control-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .control-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-blue { background: #3b82f6; color: white; }
+    .btn-green { background: #10b981; color: white; }
+    .btn-orange { background: #f59e0b; color: white; }
+    .btn-rainbow { background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b); color: white; }
+  </style>
+</head>
+<body>
+  <div class="sparkle-container">
+    <canvas id="sparkle-canvas"></canvas>
+    <div class="content-overlay">
+      <h1>Welcome to Learning</h1>
+      <p>Discover courses designed to help you master new skills</p>
+      <div class="controls">
+        <button class="control-btn btn-blue" onclick="SparkleEffect.setTheme('blue')">Blue Theme</button>
+        <button class="control-btn btn-green" onclick="SparkleEffect.setTheme('green')">Green Theme</button>
+        <button class="control-btn btn-orange" onclick="SparkleEffect.setTheme('orange')">Orange Theme</button>
+        <button class="control-btn btn-rainbow" onclick="SparkleEffect.setTheme('rainbow')">Rainbow</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Sparkle Effect - Namespaced for Moodle compatibility
+  const SparkleEffect = (function() {
+    'use strict';
+
+    // Configuration
+    const config = {
+      particleCount: 80,
+      minSize: 1,
+      maxSize: 4,
+      minSpeed: 0.2,
+      maxSpeed: 1.5,
+      twinkleSpeed: 0.03,
+      mouseInfluence: 100,
+      themes: {
+        blue: {
+          colors: ['#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe', '#ffffff'],
+          glow: '#3b82f6'
+        },
+        green: {
+          colors: ['#10b981', '#34d399', '#6ee7b7', '#d1fae5', '#ffffff'],
+          glow: '#10b981'
+        },
+        orange: {
+          colors: ['#f59e0b', '#fbbf24', '#fcd34d', '#fef3c7', '#ffffff'],
+          glow: '#f59e0b'
+        },
+        rainbow: {
+          colors: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ffffff'],
+          glow: '#8b5cf6'
+        }
+      }
+    };
+
+    let canvas, ctx;
+    let particles = [];
+    let currentTheme = 'rainbow';
+    let animationId;
+    let mouseX = 0, mouseY = 0;
+    let time = 0;
+
+    // Particle class
+    class Sparkle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.baseSize = config.minSize + Math.random() * (config.maxSize - config.minSize);
+        this.size = this.baseSize;
+        this.speedX = (Math.random() - 0.5) * config.maxSpeed;
+        this.speedY = (Math.random() - 0.5) * config.maxSpeed;
+        this.opacity = Math.random();
+        this.twinkleOffset = Math.random() * Math.PI * 2;
+        this.twinkleSpeed = config.twinkleSpeed + Math.random() * 0.02;
+        this.colorIndex = Math.floor(Math.random() * config.themes[currentTheme].colors.length);
+        this.hueShift = Math.random() * 30 - 15;
+      }
+
+      update(deltaTime) {
+        // Movement
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // Mouse influence
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < config.mouseInfluence && dist > 0) {
+          const force = (config.mouseInfluence - dist) / config.mouseInfluence;
+          this.x -= (dx / dist) * force * 2;
+          this.y -= (dy / dist) * force * 2;
+        }
+
+        // Twinkle effect
+        this.opacity = 0.3 + Math.abs(Math.sin(time * this.twinkleSpeed + this.twinkleOffset)) * 0.7;
+        this.size = this.baseSize * (0.8 + Math.sin(time * this.twinkleSpeed * 1.5 + this.twinkleOffset) * 0.4);
+
+        // Wrap around edges
+        if (this.x < -10) this.x = canvas.width + 10;
+        if (this.x > canvas.width + 10) this.x = -10;
+        if (this.y < -10) this.y = canvas.height + 10;
+        if (this.y > canvas.height + 10) this.y = -10;
+      }
+
+      draw() {
+        const colors = config.themes[currentTheme].colors;
+        const color = colors[this.colorIndex];
+
+        // Outer glow
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, this.size * 3
+        );
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(0.4, color + '80');
+        gradient.addColorStop(1, 'transparent');
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = this.opacity * 0.5;
+        ctx.fill();
+
+        // Core sparkle
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = this.opacity;
+        ctx.fill();
+
+        // Sparkle rays (cross pattern for larger particles)
+        if (this.size > 2 && this.opacity > 0.6) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 0.5;
+          ctx.globalAlpha = this.opacity * 0.6;
+
+          const rayLength = this.size * 2;
+
+          // Horizontal ray
+          ctx.beginPath();
+          ctx.moveTo(this.x - rayLength, this.y);
+          ctx.lineTo(this.x + rayLength, this.y);
+          ctx.stroke();
+
+          // Vertical ray
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y - rayLength);
+          ctx.lineTo(this.x, this.y + rayLength);
+          ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Shooting star class
+    class ShootingStar {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.active = false;
+        this.x = 0;
+        this.y = 0;
+        this.length = 50 + Math.random() * 100;
+        this.speed = 8 + Math.random() * 8;
+        this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.5;
+        this.opacity = 1;
+        this.trail = [];
+      }
+
+      spawn() {
+        this.active = true;
+        this.x = Math.random() * canvas.width * 0.7;
+        this.y = -20;
+        this.opacity = 1;
+        this.trail = [];
+      }
+
+      update() {
+        if (!this.active) return;
+
+        // Store trail
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 20) this.trail.shift();
+
+        // Move
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
+
+        // Fade out
+        if (this.y > canvas.height * 0.7) {
+          this.opacity -= 0.05;
+        }
+
+        // Reset when done
+        if (this.opacity <= 0 || this.y > canvas.height + 50) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        if (!this.active) return;
+
+        const colors = config.themes[currentTheme].colors;
+
+        // Draw trail
+        for (let i = 0; i < this.trail.length; i++) {
+          const point = this.trail[i];
+          const trailOpacity = (i / this.trail.length) * this.opacity * 0.5;
+
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, 2 * (i / this.trail.length), 0, Math.PI * 2);
+          ctx.fillStyle = colors[0];
+          ctx.globalAlpha = trailOpacity;
+          ctx.fill();
+        }
+
+        // Draw head
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, 8
+        );
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(0.5, colors[0]);
+        gradient.addColorStop(1, 'transparent');
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = this.opacity;
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    let shootingStars = [];
+
+    function init(canvasId) {
+      canvas = document.getElementById(canvasId);
+      if (!canvas) {
+        console.error('Sparkle canvas not found:', canvasId);
+        return;
+      }
+
+      ctx = canvas.getContext('2d');
+
+      // Set canvas size
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Mouse tracking
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        mouseX = canvas.width / 2;
+        mouseY = canvas.height / 2;
+      });
+
+      // Create particles
+      createParticles();
+
+      // Create shooting stars
+      for (let i = 0; i < 3; i++) {
+        shootingStars.push(new ShootingStar());
+      }
+
+      // Start animation
+      animate();
+
+      // Spawn shooting stars occasionally
+      setInterval(() => {
+        const inactiveStar = shootingStars.find(s => !s.active);
+        if (inactiveStar && Math.random() > 0.5) {
+          inactiveStar.spawn();
+        }
+      }, 3000);
+    }
+
+    function resize() {
+      const container = canvas.parentElement;
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+
+      // Reinitialize particles for new size
+      if (particles.length > 0) {
+        particles.forEach(p => {
+          p.x = Math.random() * canvas.width;
+          p.y = Math.random() * canvas.height;
+        });
+      }
+    }
+
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < config.particleCount; i++) {
+        particles.push(new Sparkle());
+      }
+    }
+
+    function setTheme(themeName) {
+      if (config.themes[themeName]) {
+        currentTheme = themeName;
+        // Reassign colors to particles
+        particles.forEach(p => {
+          p.colorIndex = Math.floor(Math.random() * config.themes[currentTheme].colors.length);
+        });
+      }
+    }
+
+    function animate() {
+      time++;
+
+      // Clear with slight fade for trail effect
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.15)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Update and draw particles
+      particles.forEach(p => {
+        p.update(1);
+        p.draw();
+      });
+
+      // Update and draw shooting stars
+      shootingStars.forEach(s => {
+        s.update();
+        s.draw();
+      });
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function destroy() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      window.removeEventListener('resize', resize);
+    }
+
+    // Auto-initialize if canvas exists
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => init('sparkle-canvas'));
+    } else {
+      init('sparkle-canvas');
+    }
+
+    // Public API
+    return {
+      init,
+      setTheme,
+      destroy,
+      config
+    };
+  })();
+  </script>
+</body>
+</html>

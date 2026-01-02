@@ -1,0 +1,438 @@
+<!-- Atomic Glow - Light Theme for White Background -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atomic Glow - Light</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f8fafc; min-height: 100vh; overflow: hidden; }
+    .glow-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+    #glow-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .content-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      text-align: center;
+      color: #1f2937;
+      pointer-events: none;
+    }
+    .content-overlay h1 {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .content-overlay p {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #6b7280;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-container">
+    <canvas id="glow-canvas"></canvas>
+    <div class="content-overlay">
+      <h1>Leagues of Code</h1>
+      <p>Discover your learning journey</p>
+    </div>
+  </div>
+
+  <script>
+  const AtomicGlow = (function() {
+    'use strict';
+
+    let canvas, ctx;
+    let width, height;
+    let time = 0;
+    let animationId;
+    let particles = [];
+    let mouseX = 0, mouseY = 0;
+    let isMouseInCanvas = false;
+
+    const config = {
+      particleCount: 600,
+      baseRadius: 0.30,
+      attractionStrength: 0.02,
+      noiseScale: 0.003,
+      particleMinSize: 1.5,
+      particleMaxSize: 5,
+      trailOpacity: 0.15,
+      glowIntensity: 1.0
+    };
+
+    // Colors matching course cards: Blue #3b82f6, Green #10b981
+    const colors = [
+      { r: 59, g: 130, b: 246 },    // Blue #3b82f6
+      { r: 96, g: 165, b: 250 },    // Light blue #60a5fa
+      { r: 37, g: 99, b: 235 },     // Darker blue #2563eb
+      { r: 16, g: 185, b: 129 },    // Green #10b981
+      { r: 5, g: 150, b: 105 },     // Darker green #059669
+      { r: 52, g: 211, b: 153 },    // Light green #34d399
+      { r: 6, g: 182, b: 212 },     // Cyan #06b6d4
+      { r: 14, g: 165, b: 233 },    // Sky #0ea5e9
+    ];
+
+    const background = [248, 250, 252]; // #f8fafc
+
+    // Perlin noise
+    const noise = (function() {
+      const permutation = [];
+      for (let i = 0; i < 256; i++) permutation[i] = i;
+      for (let i = 255; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [permutation[i], permutation[j]] = [permutation[j], permutation[i]];
+      }
+      const p = [...permutation, ...permutation];
+
+      function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      function lerp(a, b, t) { return a + t * (b - a); }
+      function grad(hash, x, y, z) {
+        const h = hash & 15;
+        const u = h < 8 ? x : y;
+        const v = h < 4 ? y : h === 12 || h === 14 ? x : z;
+        return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+      }
+
+      return function(x, y, z = 0) {
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        const Z = Math.floor(z) & 255;
+        x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
+        const u = fade(x), v = fade(y), w = fade(z);
+        const A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z;
+        const B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+        return lerp(
+          lerp(lerp(grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z), u),
+               lerp(grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z), u), v),
+          lerp(lerp(grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1), u),
+               lerp(grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1), u), v), w);
+      };
+    })();
+
+    class Particle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * Math.min(width, height) * 0.4;
+
+        if (initial) {
+          this.x = width / 2 + Math.cos(angle) * dist;
+          this.y = height / 2 + Math.sin(angle) * dist;
+        }
+
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+        this.baseSize = config.particleMinSize + Math.random() * (config.particleMaxSize - config.particleMinSize);
+        this.size = this.baseSize;
+        this.colorOffset = Math.random() * 100;
+        this.noiseOffsetX = Math.random() * 1000;
+        this.noiseOffsetY = Math.random() * 1000;
+        this.orbitSpeed = 0.0003 + Math.random() * 0.0008;
+        this.orbitRadius = 0.7 + Math.random() * 0.5;
+        this.pulseSpeed = 0.015 + Math.random() * 0.02;
+        this.pulseOffset = Math.random() * Math.PI * 2;
+        this.layer = Math.floor(Math.random() * 3);
+        this.opacity = 0.4 + Math.random() * 0.4;
+      }
+
+      getTargetPosition() {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const baseR = Math.min(width, height) * config.baseRadius;
+
+        const layerMultiplier = [1.4, 1.0, 0.5][this.layer];
+        const targetRadius = baseR * layerMultiplier * this.orbitRadius;
+
+        const angle = Math.atan2(this.y - centerY, this.x - centerX);
+        const noiseVal = noise(
+          Math.cos(angle) * 2 + time * 0.006,
+          Math.sin(angle) * 2 + time * 0.006,
+          this.layer * 0.5
+        );
+
+        const distortion = 1 + noiseVal * 0.5;
+        const r = targetRadius * distortion;
+        const orbitAngle = angle + time * this.orbitSpeed;
+
+        return {
+          x: centerX + Math.cos(orbitAngle) * r,
+          y: centerY + Math.sin(orbitAngle) * r
+        };
+      }
+
+      update() {
+        const target = this.getTargetPosition();
+        const dx = target.x - this.x;
+        const dy = target.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const attraction = Math.min(dist * config.attractionStrength * 0.01, 0.4);
+        this.vx += (dx / (dist + 1)) * attraction;
+        this.vy += (dy / (dist + 1)) * attraction;
+
+        const noiseX = noise(
+          this.x * config.noiseScale + this.noiseOffsetX,
+          this.y * config.noiseScale,
+          time * 0.008
+        );
+        const noiseY = noise(
+          this.x * config.noiseScale,
+          this.y * config.noiseScale + this.noiseOffsetY,
+          time * 0.008 + 100
+        );
+
+        this.vx += noiseX * 0.25;
+        this.vy += noiseY * 0.25;
+
+        if (isMouseInCanvas) {
+          const mdx = this.x - mouseX;
+          const mdy = this.y - mouseY;
+          const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          const mouseRadius = 120;
+
+          if (mDist < mouseRadius) {
+            const force = (mouseRadius - mDist) / mouseRadius;
+            this.vx += (mdx / mDist) * force * 1.5;
+            this.vy += (mdy / mDist) * force * 1.5;
+          }
+        }
+
+        this.vx *= 0.96;
+        this.vy *= 0.96;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        const pulse = Math.sin(time * this.pulseSpeed + this.pulseOffset);
+        this.size = this.baseSize * (0.8 + pulse * 0.3);
+
+        const margin = 50;
+        if (this.x < margin) this.vx += 0.3;
+        if (this.x > width - margin) this.vx -= 0.3;
+        if (this.y < margin) this.vy += 0.3;
+        if (this.y > height - margin) this.vy -= 0.3;
+      }
+
+      getColor() {
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        const dx = this.x - centerX;
+        const dy = this.y - centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = Math.min(width, height) * 0.45;
+        const distRatio = Math.min(dist / maxDist, 1);
+
+        const colorTime = time * 0.008 + this.colorOffset + distRatio * 2;
+        const colorIndex = Math.abs(colorTime) % colors.length;
+        const colorIndexInt = Math.floor(colorIndex);
+        const colorFrac = colorIndex - colorIndexInt;
+
+        const c1 = colors[colorIndexInt];
+        const c2 = colors[(colorIndexInt + 1) % colors.length];
+
+        return {
+          r: c1.r + (c2.r - c1.r) * colorFrac,
+          g: c1.g + (c2.g - c1.g) * colorFrac,
+          b: c1.b + (c2.b - c1.b) * colorFrac
+        };
+      }
+
+      draw() {
+        const color = this.getColor();
+        const pulseAlpha = 0.7 + Math.sin(time * this.pulseSpeed + this.pulseOffset) * 0.2;
+        const alpha = this.opacity * pulseAlpha;
+
+        // Soft glow (larger, more diffuse for light bg)
+        const glowSize = this.size * 4;
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, glowSize
+        );
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.6})`);
+        gradient.addColorStop(0.3, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.25})`);
+        gradient.addColorStop(0.6, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.08})`);
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Core particle
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.9})`;
+        ctx.fill();
+      }
+    }
+
+    // Soft floating shapes
+    class FloatingShape {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = width / 2 + (Math.random() - 0.5) * width * 0.6;
+        this.y = height / 2 + (Math.random() - 0.5) * height * 0.6;
+        this.size = 80 + Math.random() * 150;
+        this.colorIdx = Math.floor(Math.random() * colors.length);
+        this.noiseOffset = Math.random() * 1000;
+        this.opacity = 0.03 + Math.random() * 0.05;
+        this.driftSpeed = 0.1 + Math.random() * 0.2;
+      }
+
+      update() {
+        const n = noise(this.x * 0.001 + this.noiseOffset, time * 0.002);
+        this.x += Math.cos(n * Math.PI * 2) * this.driftSpeed;
+        this.y += Math.sin(n * Math.PI * 2) * this.driftSpeed;
+
+        // Soft attraction to center
+        const dx = width / 2 - this.x;
+        const dy = height / 2 - this.y;
+        this.x += dx * 0.001;
+        this.y += dy * 0.001;
+      }
+
+      draw() {
+        const c = colors[this.colorIdx];
+        const pulse = 1 + Math.sin(time * 0.008 + this.noiseOffset) * 0.15;
+
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * pulse);
+        gradient.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, ${this.opacity})`);
+        gradient.addColorStop(0.5, `rgba(${c.r}, ${c.g}, ${c.b}, ${this.opacity * 0.4})`);
+        gradient.addColorStop(1, 'transparent');
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+    }
+
+    let floatingShapes = [];
+
+    function init(canvasId) {
+      canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      ctx = canvas.getContext('2d');
+      resize();
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+        mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        isMouseInCanvas = true;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        isMouseInCanvas = false;
+      });
+
+      window.addEventListener('resize', resize);
+      createParticles();
+      animate();
+    }
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      if (particles.length > 0) createParticles();
+    }
+
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < config.particleCount; i++) {
+        particles.push(new Particle());
+      }
+
+      floatingShapes = [];
+      for (let i = 0; i < 6; i++) {
+        floatingShapes.push(new FloatingShape());
+      }
+    }
+
+    function drawBackground() {
+      ctx.fillStyle = `rgba(${background[0]}, ${background[1]}, ${background[2]}, ${config.trailOpacity})`;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawCentralGlow() {
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = Math.min(width, height) * 0.35;
+
+      const colorIndex = Math.floor(time * 0.006) % colors.length;
+      const c = colors[colorIndex];
+
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+      gradient.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, 0.08)`);
+      gradient.addColorStop(0.4, `rgba(${c.r}, ${c.g}, ${c.b}, 0.03)`);
+      gradient.addColorStop(1, 'transparent');
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+
+    function animate() {
+      time++;
+      drawBackground();
+
+      // Background shapes
+      floatingShapes.forEach(shape => {
+        shape.update();
+        shape.draw();
+      });
+
+      // Central glow
+      drawCentralGlow();
+
+      // Particles
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function destroy() {
+      if (animationId) cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', resize);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => init('glow-canvas'));
+    } else {
+      init('glow-canvas');
+    }
+
+    return { init, destroy, config };
+  })();
+  </script>
+</body>
+</html>

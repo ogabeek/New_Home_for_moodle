@@ -1,0 +1,728 @@
+<!-- Optimized Moodle Course Cards - Lightweight Version -->
+<style>
+  /* Custom Course Cards - Namespaced to avoid Moodle conflicts */
+  .custom-course-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    padding: 24px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+  }
+
+  .custom-course-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .custom-course-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  }
+
+  .custom-card-header {
+    padding: 24px;
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .custom-card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.08;
+    transition: opacity 0.2s ease;
+  }
+
+  .custom-card-header:hover::before {
+    opacity: 0.12;
+  }
+
+  .custom-course-icon-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .custom-interactive-course-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    position: relative;
+    z-index: 2;
+  }
+
+  .custom-card-header:hover .custom-interactive-course-icon {
+    transform: rotate(5deg) scale(1.05);
+  }
+
+  .custom-course-icon {
+    font-size: 28px;
+    user-select: none;
+  }
+
+  .custom-course-header-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+  }
+
+  .custom-course-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #1f2937;
+  }
+
+  .custom-course-level {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  .custom-difficulty-indicator {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.7rem;
+    background: rgba(0, 0, 0, 0.08);
+    color: #6b7280;
+  }
+
+  .custom-card-body {
+    padding: 0 24px 24px;
+  }
+
+  .custom-course-description {
+    color: #4b5563;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  .custom-course-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .custom-tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .custom-course-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .custom-stat-item {
+    text-align: center;
+    padding: 12px 8px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .custom-stat-value {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #1f2937;
+    margin-bottom: 2px;
+  }
+
+  .custom-stat-label {
+    font-size: 0.7rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .custom-progress-section {
+    margin-bottom: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .custom-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .custom-progress-title {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.9rem;
+  }
+
+  .custom-progress-controls {
+    display: flex;
+    gap: 6px;
+  }
+
+  .custom-progress-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  .custom-progress-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .custom-progress-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .custom-progress-text {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.8rem;
+  }
+
+  .custom-progress-percentage {
+    font-weight: 700;
+    color: #059669;
+    font-size: 0.9rem;
+  }
+
+  .custom-progress-bar {
+    height: 8px;
+    background: rgba(229, 231, 235, 0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .custom-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .custom-btn-primary {
+    width: 100%;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .custom-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* Course-specific colors - simplified */
+  .custom-course-card[data-custom-course-id="11"] .custom-card-header::before {
+    background: #3b82f6;
+  }
+  
+  .custom-course-card[data-custom-course-id="12"] .custom-card-header::before {
+    background: #10b981;
+  }
+  
+  .custom-course-card[data-custom-course-id="13"] .custom-card-header::before {
+    background: #f59e0b;
+  }
+
+  .custom-course-card[data-custom-course-id="11"] .custom-interactive-course-icon {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  
+  .custom-course-card[data-custom-course-id="12"] .custom-interactive-course-icon {
+    background: #d1fae5;
+    color: #059669;
+  }
+  
+  .custom-course-card[data-custom-course-id="13"] .custom-interactive-course-icon {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .custom-course-card[data-custom-course-id="11"] .custom-progress-btn {
+    background: #3b82f6;
+  }
+  
+  .custom-course-card[data-custom-course-id="12"] .custom-progress-btn {
+    background: #10b981;
+  }
+  
+  .custom-course-card[data-custom-course-id="13"] .custom-progress-btn {
+    background: #f59e0b;
+  }
+
+  .custom-course-card[data-custom-course-id="11"] .custom-btn-primary {
+    background: #3b82f6;
+  }
+  
+  .custom-course-card[data-custom-course-id="11"] .custom-btn-primary:hover {
+    background: #2563eb;
+  }
+
+  .custom-course-card[data-custom-course-id="12"] .custom-btn-primary {
+    background: #10b981;
+  }
+  
+  .custom-course-card[data-custom-course-id="12"] .custom-btn-primary:hover {
+    background: #059669;
+  }
+
+  .custom-course-card[data-custom-course-id="13"] .custom-btn-primary {
+    background: #f59e0b;
+  }
+  
+  .custom-course-card[data-custom-course-id="13"] .custom-btn-primary:hover {
+    background: #d97706;
+  }
+
+  /* Particle effects */
+  .custom-emoji-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    font-size: 20px;
+    user-select: none;
+  }
+
+  /* Hidden features */
+  .custom-interactive-features {
+    display: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .custom-course-container {
+      grid-template-columns: 1fr;
+      padding: 16px;
+      gap: 20px;
+    }
+  }
+</style>
+
+<div class="custom-course-container">
+  <!-- Python 1 Course -->
+  <div class="custom-course-card" data-custom-course-id="11">
+    <div class="custom-card-header">
+      <div class="custom-difficulty-indicator">★</div>
+      <div class="custom-course-icon-container">
+        <div class="custom-interactive-course-icon">
+          <div class="custom-course-icon">🐍</div>
+        </div>
+        <div class="custom-course-header-content">
+          <h3 class="custom-course-title">Python 1</h3>
+          <div class="custom-course-level">Beginner Level</div>
+        </div>
+      </div>
+    </div>
+    <div class="custom-card-body">
+      <p class="custom-course-description">Master the fundamentals of Python programming with hands-on projects and interactive coding exercises. Perfect for beginners!</p>
+      
+      <div class="custom-course-tags">
+        <span class="custom-tag">Beginner</span>
+        <span class="custom-tag">Programming</span>
+      </div>
+
+      <div class="custom-course-stats">
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">12</div>
+          <div class="custom-stat-label">Lessons</div>
+        </div>
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">4h</div>
+          <div class="custom-stat-label">Duration</div>
+        </div>
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">5</div>
+          <div class="custom-stat-label">Projects</div>
+        </div>
+      </div>
+
+      <div class="custom-interactive-features">
+        <div class="custom-feature-card" data-custom-feature="quiz">
+          <span class="custom-feature-icon">🧠</span>
+          <div class="custom-feature-text">Interactive Quizzes</div>
+        </div>
+      </div>
+
+      <div class="custom-progress-section">
+        <div class="custom-progress-header">
+          <div class="custom-progress-title">Your Progress</div>
+          <div class="custom-progress-controls">
+            <button class="custom-progress-btn" data-custom-progress-btn="-10" title="Decrease progress">-</button>
+            <button class="custom-progress-btn" data-custom-progress-btn="+10" title="Increase progress">+</button>
+          </div>
+        </div>
+        <div class="custom-progress-display">
+          <span class="custom-progress-text">Ready to start!</span>
+          <span class="custom-progress-percentage">0%</span>
+        </div>
+        <div class="custom-progress-bar" data-custom-progress-bar>
+          <div class="custom-progress-fill" data-custom-progress></div>
+        </div>
+      </div>
+
+      <a href="http://ogazipi3.beget.tech/course/view.php?id=11" class="custom-btn-primary" data-custom-btn-text>Start Learning</a>
+    </div>
+  </div>
+
+  <!-- Python 2 Course -->
+  <div class="custom-course-card" data-custom-course-id="12">
+    <div class="custom-card-header">
+      <div class="custom-difficulty-indicator">★★</div>
+      <div class="custom-course-icon-container">
+        <div class="custom-interactive-course-icon">
+          <div class="custom-course-icon">🚀</div>
+        </div>
+        <div class="custom-course-header-content">
+          <h3 class="custom-course-title">Python 2</h3>
+          <div class="custom-course-level">Advanced Level</div>
+        </div>
+      </div>
+    </div>
+    <div class="custom-card-body">
+      <p class="custom-course-description">Advanced Python concepts including OOP, web frameworks, and real-world application development. Build professional projects!</p>
+      
+      <div class="custom-course-tags">
+        <span class="custom-tag">Advanced</span>
+        <span class="custom-tag">Web Dev</span>
+      </div>
+
+      <div class="custom-course-stats">
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">18</div>
+          <div class="custom-stat-label">Lessons</div>
+        </div>
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">6h</div>
+          <div class="custom-stat-label">Duration</div>
+        </div>
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">8</div>
+          <div class="custom-stat-label">Projects</div>
+        </div>
+      </div>
+
+      <div class="custom-interactive-features">
+        <div class="custom-feature-card" data-custom-feature="api">
+          <span class="custom-feature-icon">🔗</span>
+          <div class="custom-feature-text">API Development</div>
+        </div>
+      </div>
+
+      <div class="custom-progress-section">
+        <div class="custom-progress-header">
+          <div class="custom-progress-title">Your Progress</div>
+          <div class="custom-progress-controls">
+            <button class="custom-progress-btn" data-custom-progress-btn="-10" title="Decrease progress">-</button>
+            <button class="custom-progress-btn" data-custom-progress-btn="+10" title="Increase progress">+</button>
+          </div>
+        </div>
+        <div class="custom-progress-display">
+          <span class="custom-progress-text">Ready to start!</span>
+          <span class="custom-progress-percentage">0%</span>
+        </div>
+        <div class="custom-progress-bar" data-custom-progress-bar>
+          <div class="custom-progress-fill" data-custom-progress></div>
+        </div>
+      </div>
+
+      <a href="http://ogazipi3.beget.tech/course/view.php?id=12" class="custom-btn-primary" data-custom-btn-text>Start Learning</a>
+    </div>
+  </div>
+
+  <!-- Math 101 Course -->
+  <div class="custom-course-card" data-custom-course-id="13">
+    <div class="custom-card-header">
+      <div class="custom-difficulty-indicator">★</div>
+      <div class="custom-course-icon-container">
+        <div class="custom-interactive-course-icon">
+          <div class="custom-course-icon">📊</div>
+        </div>
+        <div class="custom-course-header-content">
+          <h3 class="custom-course-title">Math 101</h3>
+          <div class="custom-course-level">Foundation Level</div>
+        </div>
+      </div>
+    </div>
+    <div class="custom-card-body">
+      <p class="custom-course-description">Build a strong mathematical foundation with interactive problem-solving and visual learning tools. Essential for STEM success!</p>
+      
+      <div class="custom-course-tags">
+        <span class="custom-tag">Foundation</span>
+        <span class="custom-tag">Problem Solving</span>
+      </div>
+
+      <div class="custom-course-stats">
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">15</div>
+          <div class="custom-stat-label">Lessons</div>
+        </div>
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">5h</div>
+          <div class="custom-stat-label">Duration</div>
+        </div>
+        <div class="custom-stat-item">
+          <div class="custom-stat-value">6</div>
+          <div class="custom-stat-label">Projects</div>
+        </div>
+      </div>
+
+      <div class="custom-interactive-features">
+        <div class="custom-feature-card" data-custom-feature="visual">
+          <span class="custom-feature-icon">📊</span>
+          <div class="custom-feature-text">Visual Tools</div>
+        </div>
+      </div>
+
+      <div class="custom-progress-section">
+        <div class="custom-progress-header">
+          <div class="custom-progress-title">Your Progress</div>
+          <div class="custom-progress-controls">
+            <button class="custom-progress-btn" data-custom-progress-btn="-10" title="Decrease progress">-</button>
+            <button class="custom-progress-btn" data-custom-progress-btn="+10" title="Increase progress">+</button>
+          </div>
+        </div>
+        <div class="custom-progress-display">
+          <span class="custom-progress-text">Ready to start!</span>
+          <span class="custom-progress-percentage">0%</span>
+        </div>
+        <div class="custom-progress-bar" data-custom-progress-bar>
+          <div class="custom-progress-fill" data-custom-progress></div>
+        </div>
+      </div>
+
+      <a href="http://ogazipi3.beget.tech/course/view.php?id=13" class="custom-btn-primary" data-custom-btn-text>Start Learning</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// Namespaced to avoid Moodle conflicts - Custom Course Cards v1.0
+(function() {
+  'use strict';
+  
+  // Namespace all variables and functions
+  const CustomCourseCards = {
+    courseData: {},
+    
+    init: function() {
+      document.querySelectorAll('.custom-course-card').forEach(card => {
+        const courseId = card.getAttribute('data-custom-course-id');
+        
+        // Load saved data with custom prefix
+        const savedData = JSON.parse(localStorage.getItem(`custom_course_${courseId}`) || '{}');
+        this.courseData[courseId] = {
+          progress: savedData.progress || 0,
+          lastAccessed: savedData.lastAccessed || null
+        };
+        
+        // Get elements with custom selectors
+        const progressFill = card.querySelector('[data-custom-progress]');
+        const progressPercentage = card.querySelector('.custom-progress-percentage');
+        const progressText = card.querySelector('.custom-progress-text');
+        const btnText = card.querySelector('[data-custom-btn-text]');
+        const progressBar = card.querySelector('[data-custom-progress-bar]');
+        const progressBtns = card.querySelectorAll('[data-custom-progress-btn]');
+        
+        // Initialize progress
+        this.updateProgress(courseId, progressFill, progressPercentage, progressText, btnText);
+        
+        // Progress control buttons
+        progressBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const change = parseInt(btn.getAttribute('data-custom-progress-btn'));
+            this.courseData[courseId].progress = Math.max(0, Math.min(100, this.courseData[courseId].progress + change));
+            this.updateProgress(courseId, progressFill, progressPercentage, progressText, btnText);
+            this.saveData(courseId);
+            
+            // Simple button feedback
+            btn.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+              btn.style.transform = '';
+            }, 100);
+          });
+        });
+        
+        // Progress bar click for direct setting
+        progressBar.addEventListener('click', (e) => {
+          const rect = progressBar.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const newProgress = Math.round((clickX / rect.width) * 100);
+          
+          this.courseData[courseId].progress = Math.max(0, Math.min(100, newProgress));
+          this.updateProgress(courseId, progressFill, progressPercentage, progressText, btnText);
+          this.saveData(courseId);
+        });
+        
+        // Course button enhancement
+        const courseBtn = card.querySelector('.custom-btn-primary');
+        courseBtn.addEventListener('click', () => {
+          this.courseData[courseId].lastAccessed = new Date().toISOString();
+          this.saveData(courseId);
+        });
+        
+        // Course header click for emoji particles
+        const cardHeader = card.querySelector('.custom-card-header');
+        cardHeader.addEventListener('click', (e) => {
+          this.createEmojiParticles(e, courseId);
+        });
+      });
+    },
+    
+    // Emoji particle effect
+    createEmojiParticles: function(event, courseId) {
+      const courseEmojis = {
+        '11': ['🐍', '💻', '🎯', '📚', '⚡', '🔥'],
+        '12': ['🚀', '⭐', '💎', '🌟', '🎉', '🔥'],
+        '13': ['📊', '🧮', '📐', '📏', '📈', '🎯']
+      };
+      
+      const emojis = courseEmojis[courseId] || ['🎉', '⭐', '🌟'];
+      const particleCount = 12;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'custom-emoji-particle';
+        particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        const startX = event.clientX;
+        const startY = event.clientY;
+        
+        particle.style.left = startX + 'px';
+        particle.style.top = startY + 'px';
+        
+        document.body.appendChild(particle);
+        
+        const angle = (i / particleCount) * Math.PI * 2;
+        const velocity = 150 + Math.random() * 100;
+        const lifetime = 1000 + Math.random() * 500;
+        
+        const deltaX = Math.cos(angle) * velocity;
+        const deltaY = Math.sin(angle) * velocity - 100;
+        
+        particle.animate([
+          {
+            transform: 'translate(0, 0) scale(1) rotate(0deg)',
+            opacity: 1
+          },
+          {
+            transform: `translate(${deltaX}px, ${deltaY}px) scale(0.8) rotate(360deg)`,
+            opacity: 0
+          }
+        ], {
+          duration: lifetime,
+          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }).onfinish = () => {
+          if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+          }
+        };
+      }
+    },
+    
+    // Helper functions
+    updateProgress: function(courseId, progressFill, progressPercentage, progressText, btnText) {
+      const progress = this.courseData[courseId].progress;
+      
+      progressFill.style.width = progress + '%';
+      progressPercentage.textContent = progress + '%';
+      
+      // Dynamic progress text
+      if (progress === 0) {
+        progressText.textContent = 'Ready to start!';
+      } else if (progress < 50) {
+        progressText.textContent = 'Making progress!';
+      } else if (progress < 100) {
+        progressText.textContent = 'Almost done!';
+      } else {
+        progressText.textContent = 'Completed! 🎉';
+      }
+      
+      // Update button text based on progress
+      if (progress === 0) {
+        btnText.textContent = 'Start Learning';
+      } else if (progress < 100) {
+        btnText.textContent = 'Continue Learning';
+      } else {
+        btnText.textContent = 'Review Course';
+      }
+    },
+    
+    saveData: function(courseId) {
+      localStorage.setItem(`custom_course_${courseId}`, JSON.stringify(this.courseData[courseId]));
+    }
+  };
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => CustomCourseCards.init());
+  } else {
+    CustomCourseCards.init();
+  }
+  
+  // Expose only necessary methods to global scope with custom namespace
+  window.CustomCourseCards = {
+    version: '1.0.0',
+    refresh: () => CustomCourseCards.init()
+  };
+})();
+</script>

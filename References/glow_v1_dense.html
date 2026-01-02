@@ -1,0 +1,165 @@
+<!-- Glow V1 - Dense Atomic Cloud -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V1 - Dense Cloud</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; min-height: 100vh; overflow: hidden; }
+    .glow-container { position: relative; width: 100vw; height: 100vh; background: #0a0612; overflow: hidden; }
+    #glow-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .content-overlay {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      z-index: 10; text-align: center; color: white; pointer-events: none;
+    }
+    .content-overlay h1 {
+      font-family: 'Segoe UI', sans-serif; font-size: 2.5rem; font-weight: 600;
+      letter-spacing: 2px; text-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+    .version-label {
+      position: fixed; top: 20px; left: 20px; color: white; font-family: 'Segoe UI', sans-serif;
+      font-size: 14px; opacity: 0.6; z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="version-label">V1 - Dense Atomic Cloud (1200 particles)</div>
+  <div class="glow-container">
+    <canvas id="glow-canvas"></canvas>
+    <div class="content-overlay">
+      <h1>My Vibe</h1>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+    let canvas, ctx, width, height, time = 0, particles = [], animationId;
+
+    const config = {
+      particleCount: 1200,
+      baseRadius: 0.35,
+      trailOpacity: 0.06
+    };
+
+    const colors = [
+      { r: 255, g: 220, b: 50 },
+      { r: 255, g: 180, b: 30 },
+      { r: 245, g: 130, b: 20 },
+      { r: 255, g: 100, b: 50 },
+      { r: 236, g: 72, b: 153 },
+      { r: 200, g: 50, b: 120 },
+    ];
+
+    const noise = (function() {
+      const p = [];
+      for (let i = 0; i < 256; i++) p[i] = i;
+      for (let i = 255; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [p[i], p[j]] = [p[j], p[i]];
+      }
+      const perm = [...p, ...p];
+      function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      function lerp(a, b, t) { return a + t * (b - a); }
+      function grad(hash, x, y) {
+        const h = hash & 3;
+        const u = h < 2 ? x : y, v = h < 2 ? y : x;
+        return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+      }
+      return function(x, y) {
+        const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+        x -= Math.floor(x); y -= Math.floor(y);
+        const u = fade(x), v = fade(y);
+        const A = perm[X] + Y, B = perm[X + 1] + Y;
+        return lerp(lerp(grad(perm[A], x, y), grad(perm[B], x - 1, y), u),
+                    lerp(grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1), u), v);
+      };
+    })();
+
+    class Particle {
+      constructor() {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * Math.min(width, height) * 0.4;
+        this.x = width / 2 + Math.cos(angle) * dist;
+        this.y = height / 2 + Math.sin(angle) * dist;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+        this.size = 0.5 + Math.random() * 2.5;
+        this.colorOffset = Math.random() * 100;
+        this.noiseOffset = Math.random() * 1000;
+        this.orbitSpeed = 0.0003 + Math.random() * 0.0008;
+        this.layer = Math.random();
+        this.pulseOffset = Math.random() * Math.PI * 2;
+      }
+
+      update() {
+        const centerX = width / 2, centerY = height / 2;
+        const baseR = Math.min(width, height) * config.baseRadius * (0.5 + this.layer * 0.8);
+        const angle = Math.atan2(this.y - centerY, this.x - centerX);
+        const noiseVal = noise(Math.cos(angle) * 2 + time * 0.006, Math.sin(angle) * 2 + time * 0.006);
+        const targetR = baseR * (1 + noiseVal * 0.35);
+        const targetX = centerX + Math.cos(angle + time * this.orbitSpeed) * targetR;
+        const targetY = centerY + Math.sin(angle + time * this.orbitSpeed) * targetR;
+
+        const dx = targetX - this.x, dy = targetY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        this.vx += (dx / (dist + 1)) * 0.015;
+        this.vy += (dy / (dist + 1)) * 0.015;
+        this.vx += noise(this.x * 0.003 + this.noiseOffset, this.y * 0.003, time * 0.008) * 0.2;
+        this.vy += noise(this.x * 0.003, this.y * 0.003 + this.noiseOffset, time * 0.008) * 0.2;
+        this.vx *= 0.96; this.vy *= 0.96;
+        this.x += this.vx; this.y += this.vy;
+      }
+
+      draw() {
+        const centerX = width / 2, centerY = height / 2;
+        const dx = this.x - centerX, dy = this.y - centerY;
+        const distRatio = Math.min(Math.sqrt(dx * dx + dy * dy) / (Math.min(width, height) * 0.4), 1);
+        const colorTime = time * 0.008 + this.colorOffset + distRatio * 2;
+        const idx = Math.floor(Math.abs(colorTime) % colors.length);
+        const c = colors[idx];
+        const brightness = (1 - distRatio * 0.4) * 1.2;
+        const alpha = 0.5 + Math.sin(time * 0.025 + this.pulseOffset) * 0.3;
+        const size = this.size * (0.8 + Math.sin(time * 0.02 + this.pulseOffset) * 0.3);
+
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, size * 4);
+        gradient.addColorStop(0, `rgba(${c.r * brightness}, ${c.g * brightness}, ${c.b * brightness}, ${alpha})`);
+        gradient.addColorStop(0.5, `rgba(${c.r * brightness}, ${c.g * brightness}, ${c.b * brightness}, ${alpha * 0.3})`);
+        gradient.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      canvas = document.getElementById('glow-canvas');
+      ctx = canvas.getContext('2d');
+      resize();
+      window.addEventListener('resize', resize);
+      for (let i = 0; i < config.particleCount; i++) particles.push(new Particle());
+      animate();
+    }
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    function animate() {
+      time++;
+      ctx.fillStyle = `rgba(12, 8, 18, ${config.trailOpacity})`;
+      ctx.fillRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      animationId = requestAnimationFrame(animate);
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+  </script>
+</body>
+</html>

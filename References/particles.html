@@ -1,0 +1,292 @@
+<div id="particle-container">
+    <canvas id="aio"></canvas>
+</div>
+
+body { 
+  background-color: #ffffff; 
+  padding: 0; 
+  margin: 0; 
+  overflow: hidden;
+}
+
+#particle-container {
+    background-color: #ffffff;
+    width: 100%;
+    height: 300px; /*Ajuster selon vos besoins */
+    position: relative;
+    overflow: hidden;
+
+
+    
+<script>
+    // Déclaration globale de la palette de couleurs
+var colorPalette = [
+  "rgba(209.0, 179.0, 51.0, 0.7)",
+  "rgba(248.0, 228.0, 135.0, 1.0)",
+  "rgba(251.5, 221.5, 67.5, 1.0)",
+  "rgba(255.0, 215.0, 0.0, 1.0)",
+  "rgba(254.5, 217.0, 27.5, 1.0)",
+  "rgba(254.0, 219.0, 55.0, 1.0)",
+  "rgba(254.5, 237.0, 155.0, 1.0)",
+  "rgba(255.0, 255.0, 255.0, 1.0)",
+  "rgba(255.0, 235.0, 127.5, 1.0)",
+  "rgba(250, 250, 210, 1.0)",
+  "rgba(252.5, 250.0, 207.5, 1.0)",
+  "rgba(255.0, 250.0, 205.0, 1.0)",
+  "#91794D", 
+  "#AC9266", 
+  "#FFFFD0"
+];
+
+var SCREEN_WIDTH = window.innerWidth;
+var SCREEN_HEIGHT = window.innerHeight;
+
+var RADIUS = 80;
+
+var RADIUS_SCALE = 1;
+var RADIUS_SCALE_MIN = 1;
+var RADIUS_SCALE_MAX = 1.5;
+
+var QUANTITY = 250;
+
+var canvas;
+var context;
+var particles;
+
+var mouseX = SCREEN_WIDTH * 0.5;
+var mouseY = SCREEN_HEIGHT * 0.5;
+var mouseIsDown = false;
+
+var isMouseOverContainer = false;
+
+var particleContainer = document.getElementById('particle-container');
+
+var center = { x: SCREEN_WIDTH / 2, y: SCREEN_HEIGHT / 2 }; // Centre du container
+var mouseAttractRadius = 150; // Rayon d'attraction de la souris
+var mouseRepelRadius = 200; // Rayon de retour au centre
+
+
+particleContainer.addEventListener('mouseenter', function() {
+  isMouseOverContainer = true;
+});
+
+particleContainer.addEventListener('mouseleave', function() {
+  isMouseOverContainer = false;
+});
+
+function init() {
+
+  canvas = document.getElementById( 'aio' );
+  
+  if (canvas && canvas.getContext) {
+		context = canvas.getContext('2d');
+		
+		// Register event listeners
+		window.addEventListener('mousemove', documentMouseMoveHandler, false);
+		window.addEventListener('mousedown', documentMouseDownHandler, false);
+		window.addEventListener('mouseup', documentMouseUpHandler, false);
+		document.addEventListener('touchstart', documentTouchStartHandler, false);
+		document.addEventListener('touchmove', documentTouchMoveHandler, false);
+		window.addEventListener('resize', windowResizeHandler, false);
+		
+		createParticles();
+		
+		windowResizeHandler();
+		
+		setInterval( loop, 1000 / 60 );
+	}
+
+    if (particleContainer) {
+        particleContainer.addEventListener('mouseenter', function() {
+          isMouseOverContainer = true;
+        });
+      
+        particleContainer.addEventListener('mouseleave', function() {
+          isMouseOverContainer = false;
+        });
+      }
+}
+
+function createParticles() {
+    particles = [];
+    
+    for (var i = 0; i < QUANTITY; i++) {
+        var randomColorIndex = Math.floor(Math.random() * colorPalette.length);
+        var angle = Math.random() * Math.PI * 2;
+        var orbit = RADIUS * .9 /* grandeur du cercle formé */+ (RADIUS * .25 * Math.random()); /* épaisseur du cercle formé par les particules */
+
+        var particle = {
+            size: Math.random() * 1,
+            position: { x: center.x + Math.cos(angle) * orbit, y: center.y + Math.sin(angle) * orbit }, 
+            offset: { x: 0, y: 0 },
+            shift: { x: center.x + Math.cos(angle) * orbit, y: center.y + Math.sin(angle) * orbit },
+            speed: 0.01 + Math.random() * 0.04,
+            mouseSpeed: 0.005 + Math.random() * 0.01,
+            targetSize: 1,
+            fillColor: colorPalette[randomColorIndex],
+            orbit: orbit
+        };
+        
+        particles.push(particle);
+    }
+}
+
+function documentMouseMoveHandler(event) {
+    if (!isMouseOverContainer) return;
+
+    var rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+}
+  
+  function documentMouseDownHandler(event) {
+    var rect = particleContainer.getBoundingClientRect();
+    mouseIsDown = true;
+  }
+  
+  function documentMouseUpHandler(event) {
+    var rect = particleContainer.getBoundingClientRect();
+    mouseIsDown = false;
+  }
+
+function documentTouchStartHandler(event) {
+  var rect = particleContainer.getBoundingClientRect();
+	if(event.touches.length == 1) {
+		event.preventDefault();
+
+		mouseX = event.touches[0].pageX - (window.innerWidth - SCREEN_WIDTH) * .5;;
+		mouseY = event.touches[0].pageY - (window.innerHeight - SCREEN_HEIGHT) * .5;
+	}
+}
+
+function documentTouchMoveHandler(event) {
+    if (event.touches.length == 1) {
+      event.preventDefault();
+  
+      var rect = particleContainer.getBoundingClientRect();
+      mouseX = event.touches[0].clientX - rect.left;
+      mouseY = event.touches[0].clientY - rect.top;
+    }
+  }
+
+  document.addEventListener('touchend', documentTouchEndHandler, false);
+    
+function documentTouchEndHandler(event) {
+    mouseX = center.x;
+    mouseY = center.y;
+}
+
+// Mise à jour de la fonction windowResizeHandler
+function windowResizeHandler() {
+    var rect = particleContainer.getBoundingClientRect();
+    SCREEN_WIDTH = rect.width;
+    SCREEN_HEIGHT = rect.height;
+    
+    canvas.width = SCREEN_WIDTH;
+    canvas.height = SCREEN_HEIGHT;
+
+    // Mettre à jour la position du centre
+    center.x = SCREEN_WIDTH / 2;
+    center.y = SCREEN_HEIGHT / 2;
+
+    // Mettre à jour les positions de départ des particules
+    for (var i = 0, len = particles.length; i < len; i++) {
+        var particle = particles[i];
+        var angle = Math.random() * Math.PI * 2;
+        var orbit = RADIUS * .5 + (RADIUS * .5 * Math.random());
+        particle.shift.x = center.x + Math.cos(angle) * orbit;
+        particle.shift.y = center.y + Math.sin(angle) * orbit;
+    }
+}
+
+function updateParticleColor(particle) {
+  var distanceToMouse = Math.sqrt(Math.pow(mouseX - particle.position.x, 2) + Math.pow(mouseY - particle.position.y, 2));
+  var maxDistance = Math.sqrt(Math.pow(SCREEN_WIDTH, 2) + Math.pow(SCREEN_HEIGHT, 2));
+  var distanceRatio = distanceToMouse / maxDistance;
+
+  // Créer un dégradé de couleur or en fonction de la distance
+  var red = Math.round(255 - 155 * distanceRatio); // Diminue de 255 à 100
+  var green = Math.round(215 - 115 * distanceRatio); // Diminue de 215 à 100
+  var blue = Math.round(0 + 55 * distanceRatio); // Augmente de 0 à 55
+
+  particle.fillColor = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
+}
+
+
+
+function loop() {
+    RADIUS_SCALE += (mouseIsDown ? RADIUS_SCALE_MAX - RADIUS_SCALE : RADIUS_SCALE_MIN - RADIUS_SCALE) * 0.02;
+    RADIUS_SCALE = Math.min(RADIUS_SCALE, RADIUS_SCALE_MAX);
+
+    context.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+    for (var i = 0, len = particles.length; i < len; i++) {
+        var particle = particles[i];
+        var lp = { x: particle.position.x, y: particle.position.y };
+        updateParticleColor(particle);
+
+        var distanceToMouse = Math.sqrt(Math.pow(mouseX - particle.position.x, 2) + Math.pow(mouseY - particle.position.y, 2));
+
+        // Rotation
+        particle.offset.x += particle.speed;
+        particle.offset.y += particle.speed;
+
+        // Follow mouse with some lag only if the mouse is over the container
+        if (distanceToMouse < mouseAttractRadius) {
+            particle.shift.x += (mouseX - particle.shift.x) * particle.mouseSpeed; // vitesse de sortie du cercle
+            particle.shift.y += (mouseY - particle.shift.y) * particle.mouseSpeed; // vitesse de sortie du cercle
+        } else if (distanceToMouse > mouseRepelRadius) {
+            particle.shift.x += (center.x - particle.shift.x) * particle.speed; // vitesse de retour du cercle
+            particle.shift.y += (center.y - particle.shift.y) * particle.speed; // vitesse de retour du cercle
+        }
+
+        // Apply position
+        particle.position.x = particle.shift.x + Math.cos(i + particle.offset.x) * (particle.orbit * RADIUS_SCALE);
+        particle.position.y = particle.shift.y + Math.sin(i + particle.offset.y) * (particle.orbit * RADIUS_SCALE);
+
+        // Limit to screen bounds
+        particle.position.x = Math.max(Math.min(particle.position.x, SCREEN_WIDTH), 0);
+        particle.position.y = Math.max(Math.min(particle.position.y, SCREEN_HEIGHT), 0);
+
+        particle.size += (particle.targetSize - particle.size) * 0.05;
+
+        if (Math.round(particle.size) == Math.round(particle.targetSize)) {
+            particle.targetSize = 1 + Math.random() * 1.5;
+        }
+
+                // Ajout des ombres
+        context.shadowColor = 'rgba(255.0, 215.0, 0.0, 0.3)'; // Couleur de l'ombre
+        context.shadowBlur = 5; // Flou de l'ombre
+        context.shadowOffsetX = 1; // Décalage horizontal de l'ombre
+        context.shadowOffsetY = 1; // Décalage vertical de l'ombre
+
+        context.beginPath();
+        context.fillStyle = particle.fillColor;
+        context.arc(particle.position.x, particle.position.y, particle.size, 0, Math.PI * 2, true);
+        context.closePath();
+        context.fill();
+
+        // Réinitialiser les propriétés de l'ombre pour les autres éléments
+        context.shadowBlur = 0;
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+    
+
+
+        context.beginPath();
+        context.fillStyle = particle.fillColor;
+        context.strokeStyle = particle.fillColor;
+        context.lineWidth = particle.size;
+        context.moveTo(lp.x, lp.y);
+        context.lineTo(particle.position.x, particle.position.y);
+        context.stroke();
+        context.arc(particle.position.x, particle.position.y, particle.size / 2, 0, Math.PI * 2, true);
+        context.fill();
+    }
+}
+
+window.onload = init;
+</script>
+
+

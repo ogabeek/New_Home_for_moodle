@@ -1,0 +1,199 @@
+<!-- Glow V2 - Organic Blobs with Flowing Lines -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V2 - Organic Flow</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; min-height: 100vh; overflow: hidden; }
+    .glow-container { position: relative; width: 100vw; height: 100vh; background: #080510; overflow: hidden; }
+    #glow-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .content-overlay {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      z-index: 10; text-align: center; color: white; pointer-events: none;
+    }
+    .content-overlay h1 {
+      font-family: 'Segoe UI', sans-serif; font-size: 2.5rem; font-weight: 600;
+      letter-spacing: 2px; text-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+    .version-label {
+      position: fixed; top: 20px; left: 20px; color: white; font-family: 'Segoe UI', sans-serif;
+      font-size: 14px; opacity: 0.6; z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="version-label">V2 - Organic Flow (blobs + flowing lines)</div>
+  <div class="glow-container">
+    <canvas id="glow-canvas"></canvas>
+    <div class="content-overlay">
+      <h1>My Vibe</h1>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+    let canvas, ctx, width, height, time = 0;
+
+    const colors = [
+      { r: 255, g: 200, b: 50 },
+      { r: 255, g: 150, b: 30 },
+      { r: 250, g: 100, b: 80 },
+      { r: 236, g: 72, b: 153 },
+      { r: 180, g: 50, b: 150 },
+    ];
+
+    const noise = (function() {
+      const p = [];
+      for (let i = 0; i < 256; i++) p[i] = i;
+      for (let i = 255; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [p[i], p[j]] = [p[j], p[i]];
+      }
+      const perm = [...p, ...p];
+      function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      function lerp(a, b, t) { return a + t * (b - a); }
+      function grad(hash, x, y) {
+        const h = hash & 3;
+        return ((h & 1) ? -(h < 2 ? x : y) : (h < 2 ? x : y)) + ((h & 2) ? -(h < 2 ? y : x) : (h < 2 ? y : x));
+      }
+      return function(x, y) {
+        const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+        x -= Math.floor(x); y -= Math.floor(y);
+        const u = fade(x), v = fade(y);
+        const A = perm[X] + Y, B = perm[X + 1] + Y;
+        return lerp(lerp(grad(perm[A], x, y), grad(perm[B], x - 1, y), u),
+                    lerp(grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1), u), v);
+      };
+    })();
+
+    // Flowing lines
+    class FlowLine {
+      constructor() { this.reset(); }
+      reset() {
+        this.points = [];
+        const startAngle = Math.random() * Math.PI * 2;
+        const startDist = Math.min(width, height) * (0.1 + Math.random() * 0.25);
+        this.x = width / 2 + Math.cos(startAngle) * startDist;
+        this.y = height / 2 + Math.sin(startAngle) * startDist;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.life = 0;
+        this.maxLife = 150 + Math.random() * 200;
+        this.colorIdx = Math.floor(Math.random() * colors.length);
+        this.noiseOffset = Math.random() * 1000;
+        this.width = 1 + Math.random() * 2;
+      }
+
+      update() {
+        this.life++;
+        if (this.life > this.maxLife) { this.reset(); return; }
+
+        const n = noise(this.x * 0.003 + this.noiseOffset, this.y * 0.003 + time * 0.005);
+        const angle = n * Math.PI * 4;
+        this.vx += Math.cos(angle) * 0.3;
+        this.vy += Math.sin(angle) * 0.3;
+        this.vx *= 0.98; this.vy *= 0.98;
+        this.x += this.vx; this.y += this.vy;
+
+        this.points.push({ x: this.x, y: this.y });
+        if (this.points.length > 50) this.points.shift();
+      }
+
+      draw() {
+        if (this.points.length < 2) return;
+        const c = colors[this.colorIdx];
+        const lifeRatio = 1 - this.life / this.maxLife;
+
+        ctx.beginPath();
+        ctx.moveTo(this.points[0].x, this.points[0].y);
+        for (let i = 1; i < this.points.length; i++) {
+          ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+        ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${lifeRatio * 0.4})`;
+        ctx.lineWidth = this.width * lifeRatio;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+    }
+
+    let flowLines = [];
+
+    function drawOrganicBlob() {
+      const centerX = width / 2, centerY = height / 2;
+      const baseRadius = Math.min(width, height) * 0.28;
+
+      // Multiple blob layers
+      for (let layer = 0; layer < 5; layer++) {
+        const layerScale = 1.4 - layer * 0.2;
+        const layerOpacity = 0.08 + layer * 0.08;
+        const points = 100;
+
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+          const angle = (i / points) * Math.PI * 2;
+          const n1 = noise(Math.cos(angle) * 2 + time * 0.008 + layer, Math.sin(angle) * 2 + time * 0.006) * 0.4;
+          const n2 = noise(Math.cos(angle) * 4 - time * 0.01, Math.sin(angle) * 4 + layer * 0.5) * 0.2;
+          const r = baseRadius * layerScale * (1 + n1 + n2);
+          const x = centerX + Math.cos(angle) * r;
+          const y = centerY + Math.sin(angle) * r;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+
+        const colorIdx = Math.floor((time * 0.01 + layer * 0.5) % colors.length);
+        const c = colors[colorIdx];
+        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, baseRadius * layerScale * 1.5);
+        gradient.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, ${layerOpacity * 1.5})`);
+        gradient.addColorStop(0.6, `rgba(${c.r}, ${c.g}, ${c.b}, ${layerOpacity * 0.5})`);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+
+      // Bright core
+      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, baseRadius * 0.4);
+      coreGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+      coreGradient.addColorStop(0.5, 'rgba(255, 220, 100, 0.15)');
+      coreGradient.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, baseRadius * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = coreGradient;
+      ctx.fill();
+    }
+
+    function init() {
+      canvas = document.getElementById('glow-canvas');
+      ctx = canvas.getContext('2d');
+      resize();
+      window.addEventListener('resize', resize);
+      for (let i = 0; i < 40; i++) flowLines.push(new FlowLine());
+      animate();
+    }
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    function animate() {
+      time++;
+      ctx.fillStyle = 'rgba(8, 5, 16, 0.08)';
+      ctx.fillRect(0, 0, width, height);
+
+      flowLines.forEach(line => { line.update(); line.draw(); });
+      drawOrganicBlob();
+
+      requestAnimationFrame(animate);
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+  </script>
+</body>
+</html>
