@@ -123,32 +123,55 @@
         // === OPTIMIZATION 5: Pre-compute per-particle values ===
         this.size = 2 + Math.random() * 4;
         this.colorIdx = (Math.random() * colorStrings.length) | 0;
-        this.speed = 0.00002 + Math.random() * 0.00004; // Even slower orbit
+        this.speed = 0.00002 + Math.random() * 0.00004;
         this.offset = Math.random() * 1000;
         this.layer = 0.6 + Math.random() * 0.8;
         this.baseOpacity = 0.3 + Math.random() * 0.4;
+
+        // Randomize direction: -1 (counter-clockwise) or +1 (clockwise)
+        this.direction = Math.random() > 0.5 ? 1 : -1;
+        // Some particles don't orbit at all, just float
+        this.orbitStrength = Math.random();
+        // Random drift angle
+        this.driftAngle = Math.random() * Math.PI * 2;
+        this.driftSpeed = 0.0001 + Math.random() * 0.0002;
       }
 
       update(centerX, centerY, baseRadius, t) {
-        // Target position with simple noise
         const angle = Math.atan2(this.y - centerY, this.x - centerX);
-        const n = noise(this.x, this.y, t * 0.001); // Even slower noise
-        const targetR = baseRadius * this.layer * (1 + n * 0.25);
-        const orbitAngle = angle + t * this.speed;
+        const distFromCenter = Math.sqrt(
+          (this.x - centerX) ** 2 + (this.y - centerY) ** 2
+        );
 
-        const targetX = centerX + fastCos(orbitAngle) * targetR;
-        const targetY = centerY + fastSin(orbitAngle) * targetR;
+        // Target radius with gentle variation
+        const n = noise(this.x * 0.5, this.y * 0.5, t * 0.001);
+        const targetR = baseRadius * this.layer * (1 + n * 0.2);
 
-        // === OPTIMIZATION 6: Simplified physics - SLOWER ===
+        // Mixed movement: some orbit, some drift randomly
+        let targetX, targetY;
+
+        if (this.orbitStrength > 0.3) {
+          // Orbiting particles - direction varies per particle
+          const orbitAngle = angle + t * this.speed * this.direction;
+          targetX = centerX + Math.cos(orbitAngle) * targetR;
+          targetY = centerY + Math.sin(orbitAngle) * targetR;
+        } else {
+          // Floating particles - gentle random drift within the blob
+          this.driftAngle += this.driftSpeed * this.direction;
+          const driftR = targetR * (0.7 + Math.sin(t * 0.002 + this.offset) * 0.3);
+          targetX = centerX + Math.cos(this.driftAngle) * driftR;
+          targetY = centerY + Math.sin(this.driftAngle) * driftR;
+        }
+
         const dx = targetX - this.x;
         const dy = targetY - this.y;
 
-        // Gentler attraction, stronger damping
-        this.vx = (this.vx + dx * 0.001) * 0.9;
-        this.vy = (this.vy + dy * 0.001) * 0.9;
+        // Very gentle attraction
+        this.vx = (this.vx + dx * 0.0008) * 0.92;
+        this.vy = (this.vy + dy * 0.0008) * 0.92;
 
-        // Clamp max velocity to prevent acceleration
-        const maxVel = 0.8;
+        // Clamp max velocity
+        const maxVel = 0.6;
         this.vx = Math.max(-maxVel, Math.min(maxVel, this.vx));
         this.vy = Math.max(-maxVel, Math.min(maxVel, this.vy));
 
@@ -213,22 +236,15 @@
       const centerY = height / 2;
       const baseRadius = Math.min(width, height) * 0.28;
 
-      // === OPTIMIZATION 9: Higher trail opacity = less overdraw needed ===
-      ctx.fillStyle = 'rgba(248, 250, 252, 0.2)';
+      // Clear canvas completely - no trails, crisp particles
+      ctx.fillStyle = '#f8fafc';
       ctx.fillRect(0, 0, width, height);
 
-      // === OPTIMIZATION 10: Apply blur once via CSS shadow, not per-particle ===
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = 'rgba(59, 130, 246, 0.3)';
-
-      // Update and draw all particles
+      // Update and draw all particles (no shadow/halo)
       for (let i = 0; i < particles.length; i++) {
         particles[i].update(centerX, centerY, baseRadius, time);
         particles[i].draw(ctx, time);
       }
-
-      // Reset shadow for next frame
-      ctx.shadowBlur = 0;
 
       animationId = requestAnimationFrame(animate);
     }
