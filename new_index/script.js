@@ -109,7 +109,7 @@ const NODE_SIZE = 4;
 const LINE_COLOR = "rgba(240,240,240,1)";
 const NODES_DISTANCE = 35;
 const SPEED_DAMPING = 0.8;
-const EMPTY_COURSE_NODES_COUNT = 5;
+const EMPTY_COURSE_NODES_COUNT = 10;
 
 class Particle {
   constructor(x, y, size, colorPrefix, opacity, parent, group) {
@@ -625,3 +625,50 @@ document.addEventListener('DOMContentLoaded', () => {
     particleSystem = new ParticleSystem('hero-canvas');
   });
 });
+
+// -------------------------------
+// Copy-to-clipboard for footer
+// -------------------------------
+function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  ta.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  return Promise.resolve();
+}
+
+function showCopyTooltip(el) {
+  const tip = el.querySelector('.copy-tooltip');
+  if (!tip) return;
+  tip.classList.add('show');
+  setTimeout(() => tip.classList.remove('show'), 1400);
+}
+
+function setupCopyableFooterItems() {
+  document.querySelectorAll('.copyable').forEach(el => {
+    const text = el.getAttribute('data-copy') || el.textContent.trim();
+    el.addEventListener('click', () => {
+      copyTextToClipboard(text).then(() => showCopyTooltip(el));
+    });
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        copyTextToClipboard(text).then(() => showCopyTooltip(el));
+      }
+    });
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupCopyableFooterItems);
+} else {
+  setupCopyableFooterItems();
+}

@@ -484,6 +484,27 @@ h2 {
   font-weight: bold;
 }
 
+/* Brand links in footer: no underline, blue on hover */
+.footer-brand h3 a.footer-brand-link {
+  color: var(--base01);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  font-weight: inherit; /* match surrounding text so it reads as one phrase */
+  cursor: pointer;
+  display: inline;
+  font-size: inherit; /* ensure same size as the h3 text */
+}
+.footer-brand h3 a.footer-brand-link:hover,
+.footer-brand h3 a.footer-brand-link:focus {
+  color: var(--blue);
+  text-decoration: none;
+}
+.footer-brand h3 .brand-sep {
+  margin: 0 6px; /* small gap to keep it continuous */
+  color: var(--base01);
+  font-weight: inherit;
+}
+
 .footer-brand p,
 .footer-brand a {
   color: var(--base02);
@@ -626,3 +647,39 @@ h2 {
     padding: 1rem;
   }
 }
+
+/* Copy-to-clipboard styles for footer contact items */
+.copyable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  user-select: none;
+  color: inherit;
+}
+.copyable:focus {
+  outline: none; /* hide outline on mouse click */
+}
+.copyable:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.copy-tooltip {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: rgba(18,18,18,0.9);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  white-space: nowrap;
+  z-index: 60;
+}
+.copy-tooltip.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+
