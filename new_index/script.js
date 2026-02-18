@@ -117,7 +117,7 @@ const EMPTY_COURSE_NODES_COUNT = 10;
 const SCALE_CONFIG = {
   constant: 12,
   min: 0.1,
-  max: 2.0,
+  max: 1.0,
   referenceArea: 1000000
 };
 
@@ -642,11 +642,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch real progress from Moodle (works for both logged-in and guest users)
   fetchMoodleProgress().then(() => {
     console.log('✅ Progress fetch completed!');
-
-    courseProgress['python1'] = 150;
-    courseProgress['python2'] = 150;
-    courseProgress['math101'] = 150;
-    courseProgress['math-ml'] = 150;
 
     // Initialize particle system
     particleSystem = new ParticleSystem('hero-canvas');

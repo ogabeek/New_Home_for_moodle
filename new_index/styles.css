@@ -141,7 +141,7 @@ h2 {
 .courses-section {
   width: 100%;
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 0 auto 15rem auto;
   padding: 4rem 2rem;
   box-sizing: border-box;
   color: #111827;
