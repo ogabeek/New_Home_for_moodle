@@ -1,0 +1,901 @@
+<!-- Course Page V3 - White Theme + Modern Layout -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leagues of Code | Harbour.Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue: #3b82f6;
+      --green: #10b981;
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+      --orange: #f59e0b;
+      --pink: #ec4899;
+      --white: #ffffff;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ========== NAVIGATION ========== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(248, 250, 252, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray-600);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gray-900); }
+
+    /* ========== HERO ========== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--gray-50);
+    }
+
+    #hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 700px;
+      padding: 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: var(--gray-900);
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--gray-500);
+      max-width: 500px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--gray-900);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--gray-800);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--gray-700);
+      border: 1px solid var(--gray-300);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-400);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray-400);
+      font-size: 0.8rem;
+      font-weight: 500;
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-indicator svg {
+      opacity: 0.6;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ========== COURSES SECTION ========== */
+    .courses-section {
+      padding: 100px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-label {
+      display: inline-block;
+      color: var(--blue);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--gray-900);
+    }
+
+    .section-subtitle {
+      color: var(--gray-500);
+      font-size: 1.05rem;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: minmax(180px, auto);
+      gap: 16px;
+    }
+
+    .bento-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bento-card:hover {
+      border-color: var(--gray-300);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+      transform: translateY(-4px);
+    }
+
+    /* Featured Course */
+    .bento-featured {
+      grid-column: span 8;
+      grid-row: span 2;
+      background: linear-gradient(145deg, #eef6ff, #e8f4f8);
+      border-color: rgba(59,130,246,0.2);
+    }
+
+    .bento-featured:hover {
+      border-color: rgba(59,130,246,0.4);
+    }
+
+    .bento-featured .course-icon {
+      width: 72px;
+      height: 72px;
+      font-size: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(59,130,246,0.25);
+    }
+
+    .bento-featured h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--gray-900);
+    }
+
+    .bento-featured .level {
+      font-size: 0.85rem;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .bento-featured p {
+      color: var(--gray-600);
+      font-size: 1rem;
+      max-width: 420px;
+      line-height: 1.7;
+    }
+
+    .featured-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .featured-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .featured-stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .featured-stat-label {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+
+    .featured-btn {
+      position: absolute;
+      bottom: 28px;
+      right: 28px;
+      background: var(--gray-900);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .featured-btn:hover {
+      background: var(--gray-800);
+      transform: translateY(-2px);
+    }
+
+    /* Stats Card */
+    .bento-stats {
+      grid-column: span 4;
+      grid-row: span 2;
+      background: linear-gradient(145deg, #f5f3ff, #fdf2f8);
+      border-color: rgba(139,92,246,0.15);
+    }
+
+    .bento-stats h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .bento-stats .section-label {
+      margin-bottom: 8px;
+    }
+
+    .bento-stats > p {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .stat-box {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--gray-100);
+    }
+
+    .stat-box-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .stat-box-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    /* Regular Course Cards */
+    .bento-course {
+      grid-column: span 4;
+      cursor: pointer;
+    }
+
+    .bento-course .course-icon {
+      width: 52px;
+      height: 52px;
+      font-size: 26px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .bento-course.green .course-icon { background: #d1fae5; }
+    .bento-course.orange .course-icon { background: #fef3c7; }
+    .bento-course.purple .course-icon { background: #ede9fe; }
+    .bento-course.pink .course-icon { background: #fce7f3; }
+    .bento-course.cyan .course-icon { background: #cffafe; }
+
+    .bento-course h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--gray-900);
+    }
+
+    .bento-course .level {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+
+    .bento-course .description {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .meta-item {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+
+    .meta-item span {
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    /* Coming Soon */
+    .coming-soon-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--gray-100);
+      padding: 5px 10px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+
+    .bento-course.coming-soon {
+      opacity: 0.65;
+    }
+
+    .bento-course.coming-soon:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ========== CTA SECTION ========== */
+    .cta-section {
+      padding: 100px 40px;
+      text-align: center;
+      background: white;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .cta-content {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .cta-content h2 {
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--gray-900);
+    }
+
+    .cta-content p {
+      color: var(--gray-500);
+      margin-bottom: 28px;
+      font-size: 1.05rem;
+    }
+
+    .cta-content .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+    }
+
+    .cta-content .btn-primary:hover {
+      box-shadow: 0 12px 35px rgba(59,130,246,0.3);
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      padding: 32px 40px;
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--gray-500);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--gray-600);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--gray-900);
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-right svg {
+      color: #ef4444;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .bento-featured { grid-column: span 12; }
+      .bento-stats { grid-column: span 12; grid-row: span 1; }
+      .bento-course { grid-column: span 6; }
+      .featured-btn { position: static; margin-top: 20px; display: inline-block; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .courses-section { padding: 60px 20px; }
+      .bento-course { grid-column: span 12; }
+      .bento-grid { gap: 12px; }
+      .cta-section { padding: 60px 20px; }
+      footer {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 24px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="logo">Leagues of Code</div>
+    <ul class="nav-links">
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Community</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-badge">6 courses available</div>
+      <h1>Learn to Code,<br><span>Build the Future</span></h1>
+      <p>Interactive, project-based courses designed to take you from beginner to confident developer.</p>
+      <div class="hero-buttons">
+        <a href="#courses" class="btn btn-primary">Explore Courses</a>
+        <a href="#" class="btn btn-secondary">How It Works</a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll to explore</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M19 12l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Courses -->
+  <section class="courses-section" id="courses">
+    <div class="section-header">
+      <span class="section-label">Learning Paths</span>
+      <h2 class="section-title">Choose Your Journey</h2>
+      <p class="section-subtitle">From first line of code to professional developer.</p>
+    </div>
+
+    <div class="bento-grid">
+
+      <!-- Featured: Python 1 -->
+      <div class="bento-card bento-featured">
+        <div class="course-icon">🐍</div>
+        <h3>Python Fundamentals</h3>
+        <span class="level">Beginner Level</span>
+        <p>Start your coding journey with Python. Learn programming concepts through hands-on projects and build a solid foundation for any tech career.</p>
+        <div class="featured-stats">
+          <div class="featured-stat">
+            <span class="featured-stat-value">12</span>
+            <span class="featured-stat-label">Modules</span>
+          </div>
+          <div class="featured-stat">
+            <span class="featured-stat-value">40+</span>
+            <span class="featured-stat-label">Exercises</span>
+          </div>
+          <div class="featured-stat">
+            <span class="featured-stat-value">5</span>
+            <span class="featured-stat-label">Projects</span>
+          </div>
+        </div>
+        <a href="#" class="featured-btn">Start Learning</a>
+      </div>
+
+      <!-- Stats -->
+      <div class="bento-card bento-stats">
+        <span class="section-label">Community</span>
+        <h3>2,500+ Learners</h3>
+        <p>Join students building skills together</p>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-box-value">98%</div>
+            <div class="stat-box-label">Completion</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-value">4.9</div>
+            <div class="stat-box-label">Rating</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-value">150+</div>
+            <div class="stat-box-label">Projects</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-value">24/7</div>
+            <div class="stat-box-label">Support</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Python 2 -->
+      <div class="bento-card bento-course green">
+        <div class="course-icon">🚀</div>
+        <h3>Python Advanced</h3>
+        <span class="level">Advanced Level</span>
+        <p class="description">OOP, APIs, databases, and professional workflows.</p>
+        <div class="course-meta">
+          <span class="meta-item"><span>18</span> lessons</span>
+          <span class="meta-item"><span>6h</span> content</span>
+        </div>
+      </div>
+
+      <!-- Math -->
+      <div class="bento-card bento-course orange">
+        <div class="course-icon">📐</div>
+        <h3>Math for Coders</h3>
+        <span class="level">Foundation</span>
+        <p class="description">Logic, algorithms, and problem-solving essentials.</p>
+        <div class="course-meta">
+          <span class="meta-item"><span>15</span> lessons</span>
+          <span class="meta-item"><span>5h</span> content</span>
+        </div>
+      </div>
+
+      <!-- Data Science -->
+      <div class="bento-card bento-course purple">
+        <div class="course-icon">📊</div>
+        <h3>Data Science</h3>
+        <span class="level">Intermediate</span>
+        <p class="description">Data analysis, visualization, and intro to ML.</p>
+        <div class="course-meta">
+          <span class="meta-item"><span>20</span> lessons</span>
+          <span class="meta-item"><span>8h</span> content</span>
+        </div>
+      </div>
+
+      <!-- Web Dev -->
+      <div class="bento-card bento-course pink coming-soon">
+        <span class="coming-soon-badge">Coming Soon</span>
+        <div class="course-icon">🌐</div>
+        <h3>Web Development</h3>
+        <span class="level">Beginner</span>
+        <p class="description">HTML, CSS, JavaScript and modern frameworks.</p>
+        <div class="course-meta">
+          <span class="meta-item"><span>16</span> lessons</span>
+          <span class="meta-item"><span>6h</span> content</span>
+        </div>
+      </div>
+
+      <!-- Algorithms -->
+      <div class="bento-card bento-course cyan coming-soon">
+        <span class="coming-soon-badge">Coming Soon</span>
+        <div class="course-icon">🧩</div>
+        <h3>Algorithms</h3>
+        <span class="level">Advanced</span>
+        <p class="description">Data structures and algorithms for interviews.</p>
+        <div class="course-meta">
+          <span class="meta-item"><span>24</span> lessons</span>
+          <span class="meta-item"><span>10h</span> content</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Ready to Start Learning?</h2>
+      <p>Join Harbour.Space's coding community and build skills that matter.</p>
+      <a href="#" class="btn btn-primary">Get Started Free</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span>© 2025 Leagues of Code · <a href="#">Harbour.Space Institute of Technology</a></span>
+    <span class="footer-right">
+      Made with
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      for learners everywhere
+    </span>
+  </footer>
+
+  <!-- Animation -->
+  <script>
+  (function() {
+    'use strict';
+
+    let canvas, ctx, width, height, time = 0, particles = [];
+    const PARTICLE_COUNT = 180;
+
+    const colorStrings = [
+      'rgba(59,130,246,',
+      'rgba(96,165,250,',
+      'rgba(16,185,129,',
+      'rgba(52,211,153,',
+      'rgba(6,182,212,',
+    ];
+
+    const noise = (x, y, t) => Math.sin(x * 0.01 + t) * Math.cos(y * 0.01 + t * 0.7) * 0.5;
+
+    class Particle {
+      constructor() { this.reset(); }
+
+      reset() {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * Math.min(width, height) * 0.4;
+        this.x = width / 2 + Math.cos(angle) * dist;
+        this.y = height / 2 + Math.sin(angle) * dist;
+        this.vx = 0;
+        this.vy = 0;
+        this.size = 2 + Math.random() * 4;
+        this.colorIdx = (Math.random() * colorStrings.length) | 0;
+        this.speed = 0.00002 + Math.random() * 0.00004;
+        this.offset = Math.random() * 1000;
+        this.layer = 0.6 + Math.random() * 0.8;
+        this.baseOpacity = 0.35 + Math.random() * 0.35;
+        this.direction = Math.random() > 0.5 ? 1 : -1;
+        this.orbitStrength = Math.random();
+        this.driftAngle = Math.random() * Math.PI * 2;
+        this.driftSpeed = 0.0001 + Math.random() * 0.0002;
+      }
+
+      update(centerX, centerY, baseRadius, t) {
+        const angle = Math.atan2(this.y - centerY, this.x - centerX);
+        const n = noise(this.x * 0.5, this.y * 0.5, t * 0.001);
+        const targetR = baseRadius * this.layer * (1 + n * 0.2);
+
+        let targetX, targetY;
+        if (this.orbitStrength > 0.3) {
+          const orbitAngle = angle + t * this.speed * this.direction;
+          targetX = centerX + Math.cos(orbitAngle) * targetR;
+          targetY = centerY + Math.sin(orbitAngle) * targetR;
+        } else {
+          this.driftAngle += this.driftSpeed * this.direction;
+          const driftR = targetR * (0.7 + Math.sin(t * 0.002 + this.offset) * 0.3);
+          targetX = centerX + Math.cos(this.driftAngle) * driftR;
+          targetY = centerY + Math.sin(this.driftAngle) * driftR;
+        }
+
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+        this.vx = (this.vx + dx * 0.0008) * 0.92;
+        this.vy = (this.vy + dy * 0.0008) * 0.92;
+
+        const maxVel = 0.6;
+        this.vx = Math.max(-maxVel, Math.min(maxVel, this.vx));
+        this.vy = Math.max(-maxVel, Math.min(maxVel, this.vy));
+
+        this.x += this.vx;
+        this.y += this.vy;
+      }
+
+      draw(ctx, t) {
+        const pulse = 0.8 + Math.sin(t * 0.008 + this.offset) * 0.3;
+        const size = this.size * pulse;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = colorStrings[this.colorIdx] + this.baseOpacity + ')';
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      canvas = document.getElementById('hero-canvas');
+      if (!canvas) return;
+
+      ctx = canvas.getContext('2d');
+      resize();
+      window.addEventListener('resize', resize);
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push(new Particle());
+      }
+
+      animate();
+    }
+
+    function resize() {
+      const hero = canvas.parentElement;
+      width = canvas.width = hero.offsetWidth;
+      height = canvas.height = hero.offsetHeight;
+    }
+
+    function animate() {
+      time++;
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const baseRadius = Math.min(width, height) * 0.32;
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update(centerX, centerY, baseRadius, time);
+        particles[i].draw(ctx, time);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+
+</body>
+</html>

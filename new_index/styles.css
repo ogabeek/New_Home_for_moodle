@@ -1,3 +1,5 @@
+@import './brand.css';
+
 /* ============================================
    GLOBAL STYLES & RESET
    ============================================ */
@@ -11,22 +13,19 @@
   --base1: #b1bccd;
   --base2: #f5f7f9;
   --base3: #f8f8f8;
-  --yellow: #b58900;
-  --orange: #cb4b16;
-  --red: #dc322f;
-  --magenta: #d33682;
-  --violet: #6c71c4;
   --blue: #268bd2;
-  --cyan: #2aa198;
-  --green: #859900;
+
+  /* Content colors (courses, cards, stats) */
+  --text-dark: #111827;
+  --text-mid: #4b5563;
+  --text-light: #6b7280;
+  --border: #e5e7eb;
 
   /* Font Settings */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light only;
-  color: #213547;
-  background-color: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -40,7 +39,6 @@
 }
 
 body {
-  margin: 0;
   min-width: 320px;
   min-height: 100vh;
   background-color: #f8fafc;
@@ -55,11 +53,6 @@ a {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  color: #213547;
-}
-
-h2 {
-  color: #213547;
 }
 
 /* ============================================
@@ -69,7 +62,21 @@ h2 {
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
-  box-sizing: border-box;
+}
+
+/* ============================================
+   PERF STATS OVERLAY
+   ============================================ */
+.perf-stats {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-family: monospace;
+  font-size: 12px;
+  color: #999;
+  z-index: 100;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ============================================
@@ -110,7 +117,7 @@ h2 {
   font-size: 5.5rem;
   margin-bottom: 2rem;
   font-weight: 800;
-  color: #000000 !important;
+  color: #000000;
   text-shadow:
     4px 0 2px rgba(255,255,255,1),
     -4px 0 2px rgba(255,255,255,1),
@@ -121,18 +128,71 @@ h2 {
 }
 
 .hero-content p {
-  font-size: 1.5rem;
-  opacity: 0.95;
-  color: #000000 !important;
-  text-shadow:
-    4px 0 2px rgba(255,255,255,1),
-    -4px 0 2px rgba(255,255,255,1),
-    0 -4px 2px rgba(255,255,255,1),
-    0 4px 2px rgba(255,255,255,1);
+  display: none;
+}
+
+/* ============================================
+   HERO TAGLINE  (typewriter, below the NET)
+   ============================================ */
+.hero-tagline-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0 2rem 3.5rem;
+  margin-top: -2.5rem;
+  position: relative;
+  z-index: 4;
+  cursor: default;
+}
+
+/* when text is gone, hint that hovering brings it back */
+.hero-tagline.no-cursor:empty ~ *,
+.hero-tagline-wrap:has(.hero-tagline.no-cursor) {
+  cursor: text;
+}
+
+.hero-tagline {
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--text-mid);
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  text-align: center;
+  min-height: 2rem;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+/* Inline cursor — always in DOM, no absolute positioning */
+.tagline-cursor {
   font-weight: 300;
-  line-height: 1.6;
-  max-width: 700px;
-  margin: 0 auto;
+  color: var(--text-mid);
+  animation: blink-cursor 0.72s step-end infinite;
+  user-select: none;
+}
+
+.hero-tagline.no-cursor .tagline-cursor {
+  display: none;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Telegram link — plain underline style, no pill weirdness */
+.tagline-link {
+  color: #0088cc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+  transition: opacity 0.3s ease;
+}
+
+.tagline-link:hover {
+  opacity: 0.7;
+  color: #0088cc;
 }
 
 /* ============================================
@@ -143,27 +203,24 @@ h2 {
   max-width: 1280px;
   margin: 0 auto 15rem auto;
   padding: 4rem 2rem;
-  box-sizing: border-box;
-  color: #111827;
+  color: var(--text-dark);
 }
 
 .section-header {
   text-align: center;
   margin-bottom: 3rem;
-  color: #111827;
 }
 
 .section-header h2 {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  color: #111827 !important;
   margin-top: 0;
 }
 
 .section-header p {
   font-size: 1.125rem;
   opacity: 0.7;
-  color: #4b5563 !important;
+  color: var(--text-mid);
   margin: 0;
 }
 
@@ -173,7 +230,6 @@ h2 {
   gap: 2rem;
   padding: 0;
   width: 100%;
-  box-sizing: border-box;
 }
 
 /* ============================================
@@ -190,7 +246,6 @@ h2 {
   position: relative;
   margin-top: 4px;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .course-card::before {
@@ -221,7 +276,7 @@ h2 {
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .course-icon {
@@ -244,12 +299,12 @@ h2 {
   margin: 0 0 0.25rem 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-dark);
 }
 
 .course-level {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-light);
 }
 
 .card-body {
@@ -262,7 +317,7 @@ h2 {
 
 .course-description {
   margin: 0;
-  color: #4b5563;
+  color: var(--text-mid);
   line-height: 1.6;
   font-size: 0.9375rem;
 }
@@ -279,18 +334,18 @@ h2 {
   justify-content: space-between;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-light);
 }
 
 .progress-percentage {
   font-weight: 600;
-  color: #111827;
+  color: var(--text-dark);
 }
 
 .progress-bar-container {
   width: 100%;
   height: 8px;
-  background: #e5e7eb;
+  background: var(--border);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -308,8 +363,8 @@ h2 {
   display: flex;
   justify-content: space-around;
   padding: 1rem 0;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .stat {
@@ -319,13 +374,13 @@ h2 {
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-dark);
   margin-bottom: 0.25rem;
 }
 
 .stat-label {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--text-light);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -437,7 +492,6 @@ h2 {
 
 .footer-badges {
   display: flex;
-  flex-direction: row;
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
@@ -556,6 +610,32 @@ h2 {
   stroke: var(--base00);
 }
 
+.footer-brand-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.footer-brand-row svg {
+  display: block;
+  position: relative;
+  top: -2px;
+}
+
+.footer-legal {
+  margin-top: 10px;
+}
+
+.footer-copyright {
+  margin-top: 15px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.footer-social {
+  margin-top: 12px;
+}
+
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
@@ -582,7 +662,7 @@ h2 {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .courses-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -616,10 +696,6 @@ h2 {
 }
 
 @media (max-width: 640px) {
-  .courses-section {
-    padding: 2rem 1rem;
-  }
-  
   .courses-grid {
     gap: 1rem;
   }
@@ -691,4 +767,3 @@ h2 {
   z-index: 60;
 }
 .copy-tooltip.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
-
