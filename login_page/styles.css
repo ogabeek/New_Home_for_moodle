@@ -1,5 +1,3 @@
-/* *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } */
-
 :root {
   --blue: #3b4ef8;
   --blue-dark: #2d3de0;
@@ -166,16 +164,16 @@ h1 {
   font-weight: 600;
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 32px;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(59,78,248,0.35);
+  box-shadow: 0 4px 6px rgba(59,78,248,0.1);
   letter-spacing: 0.1px;
 }
 
 .btn-primary:hover {
   background: var(--blue-dark);
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(59,78,248,0.4);
+  box-shadow: 0 6px 12px rgba(59,78,248,0.2);
 }
 
 .btn-primary:active { transform: translateY(0); }
@@ -183,13 +181,32 @@ h1 {
 .forgot {
   display: block;
   text-align: center;
-  margin-top: 16px;
   font-size: 14px;
   font-weight: 600;
   color: var(--blue);
   text-decoration: none;
 }
 .forgot:hover { text-decoration: underline; }
+
+.signup-text {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--gray-500);
+  text-decoration: none;
+}
+
+.signup {
+  display: inline;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: none;
+}
+.signup:hover { text-decoration: underline; }
+
 
 .footer-links {
   margin-top: auto;
