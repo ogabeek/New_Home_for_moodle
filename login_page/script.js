@@ -21,18 +21,37 @@ document.querySelector('form').addEventListener('submit', function(e) {
 });
 
 function login(email, password) {
-  // TODO
+  // TODO: replace with real Moodle auth call
   console.log(email, password);
 }
 
-function fetchWelcomeMessage() {
-  // api call here
-  data = {
-    title: "Example Title",
-    subtitle: "Example subtitle that will be fetched with api"
-  };
-  document.getElementById('welcome-title').textContent = data.title;
-  document.getElementById('welcome-subtitle').textContent = data.subtitle;
+// ── Welcome panel messages ──────────────────────────────────────────
+const WELCOME_MESSAGES = [
+  {
+    title: 'Keep building\nyour skills.',
+    subtitle: 'Every exercise you complete gets you closer to mastery. Your progress is waiting.',
+  },
+  {
+    title: 'Grow your\nnetwork.',
+    subtitle: 'Connect with fellow coders, solve challenges together, and level up as a team.',
+  },
+  {
+    title: 'Code more,\nlearn faster.',
+    subtitle: 'Hands-on practice beats passive reading. Dive back into your exercises today.',
+  },
+  {
+    title: 'Your journey\ncontinues.',
+    subtitle: 'Pick up exactly where you left off. Your courses, your pace, your progress.',
+  },
+];
+
+function setWelcomeMessage(msg) {
+  const titleEl    = document.getElementById('welcome-title');
+  const subtitleEl = document.getElementById('welcome-subtitle');
+  // Preserve line breaks by replacing \n with <br>
+  titleEl.innerHTML    = msg.title.replace(/\n/g, '<br>');
+  subtitleEl.textContent = msg.subtitle;
 }
 
-fetchWelcomeMessage();
+// Pick a random message on every page load
+setWelcomeMessage(WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)]);
