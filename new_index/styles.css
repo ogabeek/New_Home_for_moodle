@@ -44,6 +44,64 @@ body {
   background-color: #f8fafc;
 }
 
+/* ============================================
+   NEW DESIGN WELCOME BANNER
+   ============================================ */
+.new-design-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  padding: 10px 24px;
+  background: var(--loc-dark, #05071D);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  position: relative;
+  z-index: 100;
+  animation: banner-slide-in 0.5s ease both;
+  transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+}
+
+.new-design-banner p {
+  margin: 0;
+  text-align: center;
+}
+
+.banner-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.banner-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.new-design-banner.hiding {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+@keyframes banner-slide-in {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 a {
   font-weight: 500;
   color: #646cff;

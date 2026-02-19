@@ -11,6 +11,12 @@
 </head>
 <body>
   <div class="app">
+    <!-- Welcome banner for new design rollout -->
+    <div class="new-design-banner" id="new-design-banner">
+      <p>✨ Welcome to the new Leagues of Code experience — same platform, fresh look.</p>
+      <button class="banner-close" id="banner-close" aria-label="Dismiss">&times;</button>
+    </div>
+
     <!-- FPS / particle stats overlay -->
     <div class="perf-stats" id="perf-stats"></div>
 
@@ -261,6 +267,23 @@
     </footer>
   </div>
 
-  <script src="script.js?v=15"></script>
+  <script src="script.js?v=16"></script>
+  <script>
+    // Banner dismiss — remembers choice in localStorage
+    (function() {
+      const banner = document.getElementById('new-design-banner');
+      const btn    = document.getElementById('banner-close');
+      if (!banner) return;
+      if (localStorage.getItem('loc-banner-dismissed')) {
+        banner.remove();
+        return;
+      }
+      btn.addEventListener('click', function() {
+        banner.classList.add('hiding');
+        localStorage.setItem('loc-banner-dismissed', '1');
+        setTimeout(function() { banner.remove(); }, 300);
+      });
+    })();
+  </script>
 </body>
 </html>
