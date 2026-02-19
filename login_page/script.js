@@ -37,20 +37,20 @@ function login(email, password) {
 
 const WELCOME_MESSAGES = [
   {
-    title: 'Keep building\nyour skills.',
-    subtitle: 'Every exercise you complete gets you closer to mastery. Your progress is waiting.',
+    title: 'Keep building your skills.',
+    subtitle: 'Every exercise gets you closer to mastery.',
   },
   {
-    title: 'Grow your\nnetwork.',
-    subtitle: 'Connect with fellow coders, solve challenges together, and level up as a team.',
+    title: 'Grow your network.',
+    subtitle: 'Solve challenges together and level up as a team.',
   },
   {
-    title: 'Code more,\nlearn faster.',
-    subtitle: 'Hands-on practice beats passive reading. Dive back into your exercises today.',
+    title: 'Code more, learn faster.',
+    subtitle: 'Hands-on practice beats passive reading every time.',
   },
   {
-    title: 'Your journey\ncontinues.',
-    subtitle: 'Pick up exactly where you left off. Your courses, your pace, your progress.',
+    title: 'Your journey continues.',
+    subtitle: 'Your courses, your pace, your progress — pick up where you left off.',
   },
 ];
 
@@ -61,7 +61,7 @@ let currentMsgIndex = Math.floor(Math.random() * WELCOME_MESSAGES.length);
 
 function showMessage(index) {
   const msg = WELCOME_MESSAGES[index];
-  titleEl.innerHTML = msg.title.replace(/\n/g, '<br>');
+  titleEl.textContent = msg.title;
   subtitleEl.textContent = msg.subtitle;
 }
 

@@ -259,6 +259,7 @@ h1 {
 .right-content {
   position: relative;
   z-index: 1;
+  max-width: 480px;
 }
 
 /* Crossfade container for cycling welcome messages */
@@ -269,27 +270,27 @@ h1 {
 .right-content.fade-out h2,
 .right-content.fade-out p {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(10px);
 }
 
 .right-content h2 {
   font-family: var(--font-heading, 'GT Walsheim', system-ui, sans-serif);
-  font-size: 52px;
+  font-size: 48px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-  margin-bottom: 20px;
+  letter-spacing: -0.8px;
+  line-height: 1.1;
+  margin-bottom: 16px;
   text-align: center;
   padding: 0 40px;
 }
 
 .right-content p {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
-  color: rgba(255,255,255,0.78);
+  color: rgba(255,255,255,0.60);
   line-height: 1.6;
-  max-width: 320px;
+  max-width: 360px;
   text-align: center;
   padding: 0 40px;
   margin: 0 auto;
