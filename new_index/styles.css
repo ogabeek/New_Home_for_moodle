@@ -22,7 +22,7 @@
   --border: #e5e7eb;
 
   /* Font Settings */
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light only;
@@ -114,6 +114,7 @@ h1 {
 }
 
 .hero-content h1 {
+  font-family: var(--font-heading, 'GT Walsheim', system-ui, sans-serif);
   font-size: 5.5rem;
   margin-bottom: 2rem;
   font-weight: 800;
@@ -212,6 +213,7 @@ h1 {
 }
 
 .section-header h2 {
+  font-family: var(--font-heading);
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   margin-top: 0;
@@ -452,6 +454,7 @@ h1 {
 }
 
 .cta-text h2 {
+  font-family: var(--font-heading);
   font-size: 1.8rem;
   color: var(--blue);
   font-weight: 600;

@@ -80,8 +80,28 @@ export const gradients = Object.freeze({
 });
 
 // ------------------------------------------------------------------
+// TYPOGRAPHY  (mirrors brand.css type scale from Figma)
+// ------------------------------------------------------------------
+export const fonts = Object.freeze({
+  heading: "'GT Walsheim', 'DM Sans', system-ui, sans-serif",
+  body:    "'Inter', 'DM Sans', system-ui, sans-serif",
+});
+
+export const typeScale = Object.freeze({
+  h1:    { size: 64, line: 64,  tracking: -1.6, weight: 700, family: fonts.heading },
+  h2:    { size: 40, line: 44,  tracking: -1,   weight: 700, family: fonts.heading },
+  h3:    { size: 32, line: 32,  tracking: -0.6, weight: 700, family: fonts.heading },
+  h4:    { size: 20, line: 24,  tracking: 0.1,  weight: 700, family: fonts.body    },
+  h5:    { size: 20, line: 24,  tracking: 0.1,  weight: 700, family: fonts.body    },
+  pLg:   { size: 22, line: 32,  tracking: -0.3, weight: 400, family: fonts.body    },
+  pMd:   { size: 18, line: 28,  tracking: 0,    weight: 400, family: fonts.body    },
+  pSm:   { size: 14, line: 18,  tracking: -0.1, weight: 400, family: fonts.body    },
+  btn:   { size: 16, line: 18,  tracking: 0,    weight: 400, family: fonts.body    },
+});
+
+// ------------------------------------------------------------------
 // CommonJS / plain <script> fallback
 // ------------------------------------------------------------------
 if (typeof window !== 'undefined') {
-  window.LOCBrand = { brand, secondary, courseColors, gradients };
+  window.LOCBrand = { brand, secondary, courseColors, gradients, fonts, typeScale };
 }

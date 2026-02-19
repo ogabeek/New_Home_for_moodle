@@ -1,3 +1,9 @@
+// ============================================
+// LOGIN PAGE — v8
+// Password toggle, particle canvas, cycling welcome messages
+// ============================================
+
+// ── Password toggle ─────────────────────────────────────────────────
 const toggleBtn = document.getElementById('togglePwd');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -13,11 +19,10 @@ toggleBtn.addEventListener('click', () => {
   eyeIcon.innerHTML = visible ? eyeClosed : eyeOpen;
 });
 
-document.querySelector('form').addEventListener('submit', function(e) {
+// ── Form submit ─────────────────────────────────────────────────────
+document.querySelector('form').addEventListener('submit', function (e) {
   e.preventDefault();
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  login(email, password);
+  login(emailInput.value, passwordInput.value);
 });
 
 function login(email, password) {
@@ -25,7 +30,11 @@ function login(email, password) {
   console.log(email, password);
 }
 
-// ── Welcome panel messages ──────────────────────────────────────────
+
+// ============================================
+// WELCOME PANEL — CYCLING MESSAGES
+// ============================================
+
 const WELCOME_MESSAGES = [
   {
     title: 'Keep building\nyour skills.',
@@ -45,13 +54,189 @@ const WELCOME_MESSAGES = [
   },
 ];
 
-function setWelcomeMessage(msg) {
-  const titleEl    = document.getElementById('welcome-title');
-  const subtitleEl = document.getElementById('welcome-subtitle');
-  // Preserve line breaks by replacing \n with <br>
-  titleEl.innerHTML    = msg.title.replace(/\n/g, '<br>');
+const rightContent = document.querySelector('.right-content');
+const titleEl = document.getElementById('welcome-title');
+const subtitleEl = document.getElementById('welcome-subtitle');
+let currentMsgIndex = Math.floor(Math.random() * WELCOME_MESSAGES.length);
+
+function showMessage(index) {
+  const msg = WELCOME_MESSAGES[index];
+  titleEl.innerHTML = msg.title.replace(/\n/g, '<br>');
   subtitleEl.textContent = msg.subtitle;
 }
 
-// Pick a random message on every page load
-setWelcomeMessage(WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)]);
+function cycleMessage() {
+  // Fade out
+  rightContent.classList.add('fade-out');
+  setTimeout(() => {
+    currentMsgIndex = (currentMsgIndex + 1) % WELCOME_MESSAGES.length;
+    showMessage(currentMsgIndex);
+    // Fade back in
+    rightContent.classList.remove('fade-out');
+  }, 500); // matches CSS transition duration
+}
+
+// Show first message immediately, then cycle every 6 s
+showMessage(currentMsgIndex);
+setInterval(cycleMessage, 6000);
+
+
+// ============================================
+// PARTICLE SYSTEM — Login right panel
+// Lightweight decorative version of the landing page net
+// ============================================
+
+const PARTICLE_CONFIG = {
+  count:       60,
+  nodeSize:    3,
+  lineColor:   'rgba(255,255,255,',
+  connectDist: 100,
+  speed:       0.3,
+  colors: [
+    'rgba(255,255,255,',   // white
+    'rgba(56,201,255,',    // loc-cyan
+    'rgba(207,117,255,',   // loc-violet
+  ],
+};
+
+class LoginParticle {
+  constructor(x, y, w, h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.size = PARTICLE_CONFIG.nodeSize * (0.5 + Math.random());
+    this.colorPrefix = PARTICLE_CONFIG.colors[Math.floor(Math.random() * PARTICLE_CONFIG.colors.length)];
+    this.opacity = 0.15 + Math.random() * 0.35;
+    this.vx = (Math.random() - 0.5) * PARTICLE_CONFIG.speed;
+    this.vy = (Math.random() - 0.5) * PARTICLE_CONFIG.speed;
+    this.timeOffset = Math.random() * Math.PI * 2;
+    this.pulse = 1;
+  }
+
+  update(time) {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    // Wrap around edges
+    if (this.x < -20) this.x = this.w + 20;
+    if (this.x > this.w + 20) this.x = -20;
+    if (this.y < -20) this.y = this.h + 20;
+    if (this.y > this.h + 20) this.y = -20;
+
+    // Gentle pulse
+    this.pulse = 1 + Math.sin(time * 0.008 + this.timeOffset) * 0.15;
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.colorPrefix + this.opacity.toFixed(2) + ')';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * this.pulse, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+class LoginParticleSystem {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+
+    this.ctx = this.canvas.getContext('2d', { alpha: true });
+    this.particles = [];
+    this.time = 0;
+    this.active = true;
+    this.init();
+  }
+
+  init() {
+    this.resize();
+    this.createParticles();
+    window.addEventListener('resize', () => {
+      clearTimeout(this._rt);
+      this._rt = setTimeout(() => this.resize(), 150);
+    }, { passive: true });
+    this.animate();
+  }
+
+  resize() {
+    const parent = this.canvas.parentElement;
+    if (!parent) return;
+    this.canvas.width = parent.clientWidth;
+    this.canvas.height = parent.clientHeight;
+    this.particles.forEach(p => { p.w = this.canvas.width; p.h = this.canvas.height; });
+  }
+
+  createParticles() {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    this.particles = [];
+    for (let i = 0; i < PARTICLE_CONFIG.count; i++) {
+      this.particles.push(new LoginParticle(
+        Math.random() * w,
+        Math.random() * h,
+        w, h
+      ));
+    }
+  }
+
+  drawEdges() {
+    const pts = this.particles;
+    const maxDist = PARTICLE_CONFIG.connectDist;
+    const maxDist2 = maxDist * maxDist;
+    const ctx = this.ctx;
+
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i < pts.length; i++) {
+      let edges = 0;
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].x - pts[j].x;
+        const dy = pts[i].y - pts[j].y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < maxDist2) {
+          const alpha = (1 - Math.sqrt(d2) / maxDist) * 0.12;
+          ctx.strokeStyle = PARTICLE_CONFIG.lineColor + alpha.toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.stroke();
+          if (++edges > 4) break;
+        }
+      }
+    }
+  }
+
+  animate() {
+    if (!this.active) return;
+    this.time++;
+    const { width, height } = this.canvas;
+    if (width === 0 || height === 0) {
+      requestAnimationFrame(() => this.animate());
+      return;
+    }
+
+    this.ctx.clearRect(0, 0, width, height);
+    this.particles.forEach(p => { p.update(this.time); p.draw(this.ctx); });
+    this.drawEdges();
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Only start particles when right panel is visible (desktop)
+let loginPS = null;
+const mql = window.matchMedia('(min-width: 941px)');
+
+function startParticles() {
+  if (!loginPS) {
+    loginPS = new LoginParticleSystem('login-canvas');
+  }
+}
+function stopParticles() {
+  if (loginPS) {
+    loginPS.active = false;
+    loginPS = null;
+  }
+}
+
+if (mql.matches) startParticles();
+mql.addEventListener('change', (e) => e.matches ? startParticles() : stopParticles());
