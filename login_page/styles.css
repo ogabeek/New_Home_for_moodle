@@ -1,6 +1,5 @@
 :root {
-  --blue: #3b4ef8;
-  --blue-dark: #2d3de0;
+  --blue: #3959FF;
   --bg: #1a1a2e;
   --white: #ffffff;
   --gray-100: #f8f7f5;
@@ -94,19 +93,20 @@ body {
 }
 
 .tagline {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-400);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  color: #ADB3CF;
   margin-bottom: 6px;
-  letter-spacing: 0.2px;
   align-self: center;
 }
 
 h1 {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: #1a1a2e;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
   margin-bottom: 32px;
   line-height: 1.2;
   text-align: center;
@@ -114,15 +114,17 @@ h1 {
 
 .field {
   position: relative;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .field input {
   width: 100%;
   padding: 14px 16px;
-  border: 1.5px solid #e0dedd;
+  height: 56px;
+  border: 1px solid #DEE7EE;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 400;
   font-family: 'DM Sans', sans-serif;
   color: #1a1a2e;
   background: #fff;
@@ -130,7 +132,13 @@ h1 {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.field input::placeholder { color: #aaa9a5; }
+.field input::placeholder {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  color: #ADB3CF;
+}
 
 .field input:focus {
   border-color: var(--blue);
@@ -145,7 +153,7 @@ h1 {
   background: none;
   border: none;
   cursor: pointer;
-  color: #aaa9a5;
+  color: #ADB3CF;
   display: flex;
   align-items: center;
   padding: 0;
@@ -156,13 +164,12 @@ h1 {
 .btn-primary {
   width: 100%;
   padding: 14px;
-  background: var(--blue);
+  background: linear-gradient(90deg, #3870FF 0%, #3844FF 100%);
   color: #fff;
   border: none;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
   cursor: pointer;
   margin-top: 32px;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
@@ -171,7 +178,7 @@ h1 {
 }
 
 .btn-primary:hover {
-  background: var(--blue-dark);
+  background: linear-gradient(90deg, #205aed 0%, #1d2bef 100%);
   transform: translateY(-1px);
   box-shadow: 0 6px 12px rgba(59,78,248,0.2);
 }
@@ -182,7 +189,9 @@ h1 {
   display: block;
   text-align: center;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 550;
+  line-height: 100%;
+  letter-spacing: 0.5px;
   color: var(--blue);
   text-decoration: none;
 }
@@ -191,17 +200,21 @@ h1 {
 .signup-text {
   display: block;
   text-align: center;
-  margin-top: 12px;
+  font-weight: 350;
   font-size: 14px;
-  font-weight: 400;
-  color: var(--gray-500);
+  line-height: 20px;
+  letter-spacing: 0px;
+  color: #8f9acd;
   text-decoration: none;
+  margin-top: 16px;
 }
 
 .signup {
   display: inline;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 550;
+  line-height: 100%;
+  letter-spacing: 0.5px;
   color: var(--blue);
   text-decoration: none;
 }
@@ -210,14 +223,18 @@ h1 {
 
 .footer-links {
   margin-top: auto;
-  font-size: 13px;
-  color: var(--gray-500);
+  font-size: 14px;
+  color: #232339;
+  line-height: 18px;
   text-align: center;
 }
 .footer-links a {
   color: var(--blue);
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 100%;
+  letter-spacing: 0.5px;
   text-decoration: none;
-  font-weight: 500;
 }
 .footer-links a:hover { text-decoration: underline; }
 
@@ -245,22 +262,23 @@ h1 {
 }
 
 .right-content h2 {
-  font-size: 42px;
+  font-size: 52px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: -1px;
-  line-height: 1.1;
+  letter-spacing: 0%;
+  line-height: 64px;
   margin-bottom: 20px;
   text-align: center;
   margin: 20px 40px
 }
 
 .right-content p {
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: 400;
   color: rgba(255,255,255,0.78);
-  line-height: 1.65;
+  line-height: 22px;
   max-width: 320px;
-  text-align: justify;
+  text-align: left;
   margin: 0 40px
 }
 

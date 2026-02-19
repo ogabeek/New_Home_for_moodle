@@ -24,3 +24,15 @@ function login(email, password) {
   // TODO
   console.log(email, password);
 }
+
+function fetchWelcomeMessage() {
+  // api call here
+  data = {
+    title: "Example Title",
+    subtitle: "Example subtitle that will be fetched with api"
+  };
+  document.getElementById('welcome-title').textContent = data.title;
+  document.getElementById('welcome-subtitle').textContent = data.subtitle;
+}
+
+fetchWelcomeMessage();
