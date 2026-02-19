@@ -76,9 +76,9 @@ function cycleMessage() {
   }, 500); // matches CSS transition duration
 }
 
-// Show first message immediately, then cycle every 6 s
+// Show first message immediately, then cycle every 10 s
 showMessage(currentMsgIndex);
-setInterval(cycleMessage, 6000);
+setInterval(cycleMessage, 10000);
 
 
 // ============================================
