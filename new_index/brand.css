@@ -1,9 +1,37 @@
 /* ============================================================
    LEAGUES OF CODE — DESIGN TOKENS
-   Single source of truth for all brand colours and aliases.
+   Single source of truth for all brand colours, typography,
+   and semantic aliases.
    Import this file first in any stylesheet:
      @import './brand.css';
    ============================================================ */
+
+
+/* ============================================================
+   FONT FACES
+   GT Walsheim is a licensed font — place .woff2 files in
+   new_index/fonts/ (Bold is the only weight used for headings).
+   Inter is loaded from Google Fonts in <head>.
+   ============================================================ */
+
+@font-face {
+  font-family: 'GT Walsheim';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('fonts/GT-Walsheim-Bold.woff2') format('woff2'),
+       url('fonts/GT-Walsheim-Bold.woff')  format('woff');
+}
+
+@font-face {
+  font-family: 'GT Walsheim';
+  font-weight: 700;
+  font-style: oblique;
+  font-display: swap;
+  src: url('fonts/GT-Walsheim-Bold-Oblique.woff2') format('woff2'),
+       url('fonts/GT-Walsheim-Bold-Oblique.woff')  format('woff');
+}
+
 
 :root {
 
@@ -48,6 +76,84 @@
   /* Gradients (logo mark direction) */
   --gradient-brand:       linear-gradient(135deg, var(--loc-blue) 0%, var(--loc-cyan) 100%);
   --gradient-brand-dark:  linear-gradient(135deg, var(--loc-dark) 0%, var(--loc-blue) 100%);
+
+  /* ----------------------------------------------------------
+     TYPOGRAPHY — Font Families
+     GT Walsheim  → headings (H1–H3)
+     Inter        → sub-headings (H4–H5), body, buttons
+     DM Sans kept as secondary fallback (visually close to Inter)
+  ---------------------------------------------------------- */
+  --font-heading:  'GT Walsheim', 'DM Sans', system-ui, sans-serif;
+  --font-body:     'Inter', 'DM Sans', system-ui, sans-serif;
+
+  /* ----------------------------------------------------------
+     TYPOGRAPHY — Type Scale (from Figma brand spec)
+     Convention:  --type-{token}-{property}
+     All values match the designer's spec exactly.
+  ---------------------------------------------------------- */
+
+  /* H1 — Display */
+  --type-h1-size:      64px;
+  --type-h1-line:      64px;   /* 1.0 ratio */
+  --type-h1-tracking:  -1.6px;
+  --type-h1-weight:    700;
+  --type-h1-family:    var(--font-heading);
+
+  /* H2 */
+  --type-h2-size:      40px;
+  --type-h2-line:      44px;   /* 1.1 ratio */
+  --type-h2-tracking:  -1px;
+  --type-h2-weight:    700;
+  --type-h2-family:    var(--font-heading);
+
+  /* H3 */
+  --type-h3-size:      32px;
+  --type-h3-line:      32px;   /* 1.0 ratio */
+  --type-h3-tracking:  -0.6px;
+  --type-h3-weight:    700;
+  --type-h3-family:    var(--font-heading);
+
+  /* H4 */
+  --type-h4-size:      20px;
+  --type-h4-line:      24px;   /* 1.2 ratio */
+  --type-h4-tracking:  0.1px;
+  --type-h4-weight:    700;
+  --type-h4-family:    var(--font-body);
+
+  /* H5 */
+  --type-h5-size:      20px;
+  --type-h5-line:      24px;
+  --type-h5-tracking:  0.1px;
+  --type-h5-weight:    700;
+  --type-h5-family:    var(--font-body);
+
+  /* P-Large */
+  --type-p-lg-size:    22px;
+  --type-p-lg-line:    32px;   /* 1.45 ratio */
+  --type-p-lg-tracking: -0.3px;
+  --type-p-lg-weight:  400;
+  --type-p-lg-family:  var(--font-body);
+
+  /* P-Medium (default body) */
+  --type-p-md-size:    18px;
+  --type-p-md-line:    28px;   /* 1.56 ratio */
+  --type-p-md-tracking: 0px;
+  --type-p-md-weight:  400;
+  --type-p-md-family:  var(--font-body);
+
+  /* P-Small */
+  --type-p-sm-size:    14px;
+  --type-p-sm-line:    18px;   /* 1.29 ratio */
+  --type-p-sm-tracking: -0.1px;
+  --type-p-sm-weight:  400;
+  --type-p-sm-family:  var(--font-body);
+
+  /* Button */
+  --type-btn-size:     16px;
+  --type-btn-line:     18px;
+  --type-btn-tracking: 0px;
+  --type-btn-weight:   400;
+  --type-btn-family:   var(--font-body);
 
   /* ----------------------------------------------------------
      COURSE COLOUR MAPPING  (matches courseColorConfigs in JS)
