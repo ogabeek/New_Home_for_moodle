@@ -619,7 +619,7 @@ h1 {
   border-radius: 6px;
   background-color: var(--base2);
   font-size: 0.8rem;
-  transition: 0.2s;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -632,6 +632,26 @@ h1 {
   transform: translateY(-1px);
 }
 
+/* Option A — outline ring breathes outward */
+@keyframes badge-outline {
+  0%, 100% { outline-color: transparent;         outline-offset: 2px; }
+  45%       { outline-color: rgba(56,68,255,.28); outline-offset: 6px; }
+}
+/* Option B — border + text color breathes to brand blue */
+@keyframes badge-breathe {
+  0%, 100% { border-color: var(--base1);          color: var(--base00); }
+  45%       { border-color: rgba(56,68,255,.55);   color: rgba(56,68,255,.8); }
+}
+/* Option C — background wash: barely-there blue tint swells in and out */
+@keyframes badge-wash {
+  0%, 100% { background-color: var(--base2); }
+  45%       { background-color: rgba(56,68,255,.07); }
+}
+
+/* Active option — swap animation name to try A / B / C */
+.footer-badge.is-pulsing {
+  animation: badge-wash 5s ease-in-out;
+}
 .footer-media {
   color: var(--base00);
   padding: 6px 12px;
@@ -662,20 +682,23 @@ h1 {
   font-weight: bold;
 }
 
-/* Brand links in footer: no underline, blue on hover */
+/* Brand links in footer: inherit color, thin underline fades in on hover */
 .footer-brand h3 a.footer-brand-link {
-  color: var(--base01);
+  color: var(--blue);
   text-decoration: none;
-  transition: color 0.15s ease;
-  font-weight: inherit; /* match surrounding text so it reads as one phrase */
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease, opacity 0.15s ease;
+  font-weight: inherit;
   cursor: pointer;
   display: inline;
-  font-size: inherit; /* ensure same size as the h3 text */
+  font-size: inherit;
+  padding-bottom: 1px;
+  opacity: 0.7;
 }
 .footer-brand h3 a.footer-brand-link:hover,
 .footer-brand h3 a.footer-brand-link:focus {
-  color: var(--blue);
-  text-decoration: none;
+  opacity: 1;
+  border-bottom-color: currentColor;
 }
 .footer-brand h3 .brand-sep {
   margin: 0 6px; /* small gap to keep it continuous */
@@ -735,6 +758,22 @@ h1 {
   display: block;
   position: relative;
   top: -2px;
+}
+
+@keyframes icon-alive {
+  0%   { transform: translateY(0); }
+  12%  { transform: translateY(-8px); }
+  24%  { transform: translateY(0); }
+  36%  { transform: translateY(-6px); }
+  48%  { transform: translateY(0); }
+  60%  { transform: translateY(-4px); }
+  72%  { transform: translateY(0); }
+  84%  { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+.footer-brand-row svg.is-alive {
+  animation: icon-alive 1.8s ease-out forwards;
 }
 
 .footer-legal {

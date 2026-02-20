@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=24">
+  <link rel="stylesheet" href="styles.css?v=33">
 </head>
 <body>
   <div class="app">
@@ -113,6 +113,7 @@
 
             <div class="footer-brand-row">
               <svg
+                id="footer-logo"
                 width="28.9"
                 height="20.0"
                 viewBox="0 0 289 200"
@@ -129,8 +130,8 @@
                 />
               </svg>
               <h3>
-                <a href="https://www.leaguesofcode.com/" class="footer-brand-link" target="_blank" rel="noopener noreferrer">Leagues of Code</a>
-                <span class="brand-sep">| Powered By</span>
+                <a href="https://www.leaguesofcode.com/" class="footer-brand-link" target="_blank" rel="noopener noreferrer">&nbspLeagues of Code</a>
+                <span class="brand-sep">| Powered by</span>
                 <a href="https://harbour.space/" class="footer-brand-link" target="_blank" rel="noopener noreferrer">Harbour.Space</a>
               </h3>
             </div>
@@ -281,5 +282,36 @@
 
   <script src="script.js?v=24"></script>
   <script>if(localStorage.getItem('loc-banner-dismissed'))document.getElementById('new-design-banner')?.remove();</script>
+  <script>
+    // Trigger logo "alive" jump once when footer scrolls into view
+    (function() {
+      const logo = document.getElementById('footer-logo');
+      if (!logo || !('IntersectionObserver' in window)) return;
+      const observer = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) {
+          logo.classList.add('is-alive');
+          observer.disconnect(); // fire only once
+        }
+      }, { threshold: 0.8 });
+      observer.observe(logo);
+    })();
+  </script>
+  <script>
+    // Nudge a random badge every 10s
+    (function() {
+      const badges = Array.from(document.querySelectorAll('.footer-badge'));
+      let last = -1;
+      function pulse() {
+        let i; do { i = Math.floor(Math.random() * badges.length); } while (i === last && badges.length > 1);
+        last = i;
+        const b = badges[i];
+        b.classList.remove('is-pulsing');
+        void b.offsetWidth;
+        b.classList.add('is-pulsing');
+        b.addEventListener('animationend', () => b.classList.remove('is-pulsing'), { once: true });
+      }
+      setTimeout(() => { pulse(); setInterval(pulse, 10000); }, 3000);
+    })();
+  </script>
 </body>
 </html>
