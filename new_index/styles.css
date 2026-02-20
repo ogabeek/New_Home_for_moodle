@@ -101,6 +101,98 @@ h1 {
 }
 
 /* ============================================
+   SITE NAV
+   ============================================ */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 2rem;
+  background: #f8fafc;
+}
+
+.site-nav-logo {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+.site-nav-logo:hover {
+  opacity: 0.8;
+}
+
+.nav-login {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--loc-blue, #3844FF);
+  text-decoration: none;
+  padding: 7px 18px;
+  border: 1.5px solid var(--loc-blue, #3844FF);
+  border-radius: 8px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-login:hover {
+  background: var(--loc-blue, #3844FF);
+  color: #fff;
+}
+
+/* Logged-in nav links group */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-greeting {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dark, #111827);
+}
+
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--loc-blue, #3844FF);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-link:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.nav-link--logout {
+  font-weight: 600;
+  color: var(--loc-blue, #3844FF);
+  border: 1.5px solid var(--loc-blue, #3844FF);
+}
+.nav-link--logout:hover {
+  background: var(--loc-blue, #3844FF);
+  color: #fff;
+}
+
+/* ============================================
    HERO SECTION
    ============================================ */
 .hero {
