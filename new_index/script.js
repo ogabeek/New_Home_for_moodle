@@ -553,10 +553,36 @@ async function fetchMoodleProgress() {
       }
 
       updateCourseCardsProgress();
+      updateHeader(data.userid, data.firstname);
     }
   } catch (error) {
-    // Keep default progress on error
+    // Keep default progress and guest header on error
   }
+}
+
+// ============================================
+// HEADER AUTH STATE
+// ============================================
+
+function updateHeader(userid, firstname) {
+  const nav = document.getElementById('header-nav');
+  if (!nav || !userid) return;
+
+  const name = (firstname || 'User').replace(/[<>"'&]/g, '');
+  const initial = name.charAt(0).toUpperCase();
+
+  // Keep the logo, only replace the right-side links
+  const logo = nav.querySelector('.site-nav-logo');
+  const logoHTML = logo ? logo.outerHTML : '';
+
+  nav.innerHTML =
+    logoHTML +
+    '<div class="nav-links">' +
+      '<span class="nav-greeting">Hi, ' + name + '</span>' +
+      '<span class="nav-avatar">' + initial + '</span>' +
+      '<a href="/my/" class="nav-link">My Courses</a>' +
+      '<a href="/login/logout.php" class="nav-link nav-link--logout">Log out</a>' +
+    '</div>';
 }
 
 function updateCourseCardsProgress() {
