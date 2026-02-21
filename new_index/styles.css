@@ -19,6 +19,7 @@
   --text-dark: #111827;
   --text-mid: #4b5563;
   --text-light: #6b7280;
+  --text-muted-ui: #64748b;
   --border: #e5e7eb;
 
   /* Font Settings */
@@ -93,7 +94,7 @@ h1 {
   left: 10px;
   font-family: monospace;
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-muted-ui);
   z-index: 100;
   pointer-events: none;
   user-select: none;
@@ -148,20 +149,7 @@ h1 {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-dark, #111827);
-}
-
-.nav-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--loc-blue, #3844FF);
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .nav-link {
@@ -260,7 +248,7 @@ h1 {
 .hero-tagline {
   font-size: 1.35rem;
   font-weight: 400;
-  color: var(--text-mid);
+  color: var(--text-muted-ui);
   letter-spacing: 0.01em;
   line-height: 1.5;
   text-align: center;
@@ -273,9 +261,15 @@ h1 {
 /* Inline cursor — always in DOM, no absolute positioning */
 .tagline-cursor {
   font-weight: 300;
-  color: var(--text-mid);
-  animation: blink-cursor 0.72s step-end infinite;
+  color: var(--text-muted-ui);
+  opacity: 0.28;
+  transition: opacity 0.2s ease;
   user-select: none;
+}
+
+.tagline-cursor.is-preblink {
+  opacity: 0.55;
+  animation: blink-cursor 0.2s step-end 6;
 }
 
 .hero-tagline.no-cursor .tagline-cursor {
@@ -283,13 +277,14 @@ h1 {
 }
 
 @keyframes blink-cursor {
-  0%, 100% { opacity: 1; }
+  0%, 100% { opacity: 0.55; }
   50%       { opacity: 0; }
 }
 
 /* Telegram link — same colour as tagline, no harsh underline */
 .tagline-link {
   color: inherit;
+  font-weight: 400;
   text-decoration: none;
   border-bottom: 1px solid currentColor;
   padding-bottom: 1px;
@@ -326,8 +321,8 @@ h1 {
 
 .section-header p {
   font-size: 1.125rem;
-  opacity: 0.7;
-  color: var(--text-mid);
+  opacity: 1;
+  color: var(--text-muted-ui);
   margin: 0;
 }
 
