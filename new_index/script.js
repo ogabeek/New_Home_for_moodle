@@ -2,38 +2,38 @@
 // DATA & CONFIGURATION
 // ============================================
 
-const courseColorConfigs = {
+const courseColorConfigs = Object.freeze({
   blue: {
-    icon: '#dbeafe',
-    button: '#3b82f6',
+    icon: 'var(--course-blue-icon)',
+    button: 'var(--course-blue-btn)',
     particles: ['rgba(59,130,246,', 'rgba(96,165,250,'],
   },
   green: {
-    icon: '#d1fae5',
-    button: '#10b981',
+    icon: 'var(--course-green-icon)',
+    button: 'var(--course-green-btn)',
     particles: ['rgba(16,185,129,', 'rgba(52,211,153,'],
   },
   orange: {
-    icon: '#fef3c7',
-    button: '#f59e0b',
+    icon: 'var(--course-orange-icon)',
+    button: 'var(--course-orange-btn)',
     particles: ['rgba(245,158,11,', 'rgba(251,191,36,'],
   },
   purple: {
-    icon: '#ede9fe',
-    button: '#8b5cf6',
+    icon: 'var(--course-purple-icon)',
+    button: 'var(--course-purple-btn)',
     particles: ['rgba(139,92,246,', 'rgba(167,139,250,'],
   },
   grey: {
-    icon: '#f3f4f6',
-    button: '#6b7280',
+    icon: 'var(--course-grey-icon)',
+    button: 'var(--course-grey-btn)',
     particles: ['rgba(107,114,128,', 'rgba(156,163,175,'],
   },
   cyan: {
-    icon: '#cffafe',
-    button: '#06b6d4',
+    icon: 'var(--course-cyan-icon)',
+    button: 'var(--course-cyan-btn)',
     particles: ['rgba(6,182,212,', 'rgba(34,211,238,'],
   },
-};
+});
 
 const courses = {
   python1: {
@@ -89,6 +89,76 @@ const courseProgress = {
   'math-ml': 0,
   other: 0,
 };
+
+const BANNER_STORAGE_KEY = 'loc-banner-dismissed';
+const PHYSICS_EPSILON = 1e-6;
+
+const telemetryState = {
+  fps: 0,
+  particles: 0,
+  apiStatus: 'idle',
+  lastSyncAt: null,
+  timerId: null,
+};
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function getSafeProgress(progress, total) {
+  const safeProgress = Math.max(0, Number(progress) || 0);
+  const safeTotal = Math.max(0, Number(total) || 0);
+  return {
+    progress: safeTotal > 0 ? Math.min(safeProgress, safeTotal) : safeProgress,
+    total: safeTotal,
+  };
+}
+
+function getProgressPercentage(progress, total) {
+  const normalized = getSafeProgress(progress, total);
+  if (normalized.total === 0) return 0;
+  return clamp(Math.round((normalized.progress / normalized.total) * 100), 0, 100);
+}
+
+function getApiStatusLabel(status) {
+  if (status === 'online') return 'ONLINE';
+  if (status === 'syncing') return 'SYNCING';
+  if (status === 'degraded') return 'DEGRADED';
+  return 'IDLE';
+}
+
+function formatLastSync(lastSyncAt) {
+  if (!lastSyncAt) return 'Waiting';
+  const ageSeconds = Math.max(0, Math.floor((Date.now() - lastSyncAt) / 1000));
+  if (ageSeconds < 3) return 'Just now';
+  if (ageSeconds < 60) return `${ageSeconds}s ago`;
+  if (ageSeconds < 3600) return `${Math.floor(ageSeconds / 60)}m ago`;
+  return `${Math.floor(ageSeconds / 3600)}h ago`;
+}
+
+function renderTelemetryHud() {
+  const statsEl = document.getElementById('perf-stats');
+  if (!statsEl) return;
+
+  const base = `FPS: ${telemetryState.fps || 0} | Particles: ${telemetryState.particles || 0}`;
+  if (telemetryState.apiStatus === 'idle') {
+    statsEl.textContent = base;
+    return;
+  }
+
+  statsEl.textContent = `${base} | API: ${getApiStatusLabel(telemetryState.apiStatus)} | Sync: ${formatLastSync(telemetryState.lastSyncAt)}`;
+}
+
+function setTelemetryApiStatus(status) {
+  telemetryState.apiStatus = status;
+  renderTelemetryHud();
+}
+
+function startTelemetryHud() {
+  renderTelemetryHud();
+  if (telemetryState.timerId) clearInterval(telemetryState.timerId);
+  telemetryState.timerId = setInterval(renderTelemetryHud, 1000);
+}
 
 
 // ============================================
@@ -380,7 +450,7 @@ class ParticleSystem {
       // Mouse repulsion
       const mouseDistance2 = (mouse.x - particle.x) ** 2 + (mouse.y - particle.y) ** 2;
       const mouseDistance = Math.sqrt(mouseDistance2);
-      if (mouseDistance < repulsionRadius) {
+      if (mouseDistance > PHYSICS_EPSILON && mouseDistance < repulsionRadius) {
         const force = repulsionForce * (repulsionRadius - mouseDistance) / repulsionRadius;
         fx += (particle.x - mouse.x) / mouseDistance * force;
         fy += (particle.y - mouse.y) / mouseDistance * force;
@@ -406,7 +476,7 @@ class ParticleSystem {
             let wantedDistance = padding + particle.size + particle2.size;
             
             // Repulsion between particles
-            if (dist2 < wantedDistance ** 2) {
+            if (dist2 > PHYSICS_EPSILON && dist2 < wantedDistance ** 2) {
               const dist = Math.sqrt(dist2);
               const t = (wantedDistance - dist) / wantedDistance;
               const force = 6 * t;
@@ -434,6 +504,8 @@ class ParticleSystem {
     // Draw particles
     particles.forEach(particle => particle.draw(this.ctx));
 
+    telemetryState.particles = particles.length;
+
     // FPS counter
     this.frames++;
     const now = performance.now();
@@ -441,8 +513,7 @@ class ParticleSystem {
       this.fps = this.frames;
       this.frames = 0;
       this.lastFpsTime = now;
-      const statsEl = document.getElementById('perf-stats');
-      if (statsEl) statsEl.textContent = `FPS: ${this.fps} | Particles: ${particles.length}`;
+      telemetryState.fps = this.fps;
     }
 
     this.animationFrame = requestAnimationFrame(() => this.animate());
@@ -462,7 +533,8 @@ function renderCourseCards() {
     const config = courseColorConfigs[course.color];
     // progress is now actual question count, not percentage (0-100)
     const progress = courseProgress[id] || 0;
-    const progressPercentage = Math.round((progress / course.stats.exercises) * 100);
+    const normalized = getSafeProgress(progress, course.stats.exercises);
+    const progressPercentage = getProgressPercentage(progress, course.stats.exercises);
 
     const card = document.createElement('div');
     card.className = `course-card${course.comingSoon ? ' coming-soon' : ''}`;
@@ -484,7 +556,7 @@ function renderCourseCards() {
         <div class="course-progress">
           <div class="progress-label">
             <span>Progress</span>
-            <span class="progress-percentage">${progress}/${course.stats.exercises}</span>
+            <span class="progress-percentage">${normalized.progress}/${normalized.total}</span>
           </div>
           <div class="progress-bar-container">
             <div 
@@ -530,33 +602,54 @@ async function fetchMoodleProgress() {
 
     // Use questionprogress.php for exercise-level tracking
     const response = await fetch(`/local/questionprogress.php?courses=${moodleIds}&all=1`);
-    const data = await response.json();
-
-    if (data.success && data.data) {
-      Object.entries(courses).forEach(([id, course]) => {
-        if (!course.stats) return; // skip stat-less entries like 'other'
-        if (course.moodleId && data.data[course.moodleId]) {
-          const moodleData = data.data[course.moodleId];
-          courseProgress[id] = moodleData.correct || 0;
-
-          if (moodleData.total > 0) {
-            course.stats.exercises = moodleData.total;
-          }
-          if (moodleData.lessons > 0) {
-            course.stats.lessons = moodleData.lessons;
-          }
-        }
-      });
-
-      if (data.data.other) {
-        courseProgress.other = data.data.other.correct || 0;
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        setTelemetryApiStatus('idle');
+        telemetryState.lastSyncAt = null;
+        return false;
       }
-
-      updateCourseCardsProgress();
-      updateHeader(data.userid, data.firstname);
+      throw new Error(`Progress API request failed with status ${response.status}`);
     }
+
+    const data = await response.json();
+    if (!data || !data.success || !data.data) {
+      throw new Error('Progress API returned an unexpected payload');
+    }
+
+    Object.entries(courses).forEach(([id, course]) => {
+      if (!course.stats) return; // skip stat-less entries like 'other'
+      if (course.moodleId && data.data[course.moodleId]) {
+        const moodleData = data.data[course.moodleId];
+        courseProgress[id] = moodleData.correct || 0;
+
+        if (moodleData.total > 0) {
+          course.stats.exercises = moodleData.total;
+        }
+        if (moodleData.lessons > 0) {
+          course.stats.lessons = moodleData.lessons;
+        }
+      }
+    });
+
+    if (data.data.other) {
+      courseProgress.other = data.data.other.correct || 0;
+    }
+
+    updateCourseCardsProgress();
+    updateHeader(data.userid, data.firstname);
+    if (data.userid) {
+      telemetryState.lastSyncAt = Date.now();
+      setTelemetryApiStatus('online');
+    } else {
+      telemetryState.lastSyncAt = null;
+      setTelemetryApiStatus('idle');
+    }
+    return true;
   } catch (error) {
-    // Keep default progress and guest header on error
+    console.error('Unable to fetch Moodle progress:', error);
+    setTelemetryApiStatus('idle');
+    telemetryState.lastSyncAt = null;
+    return false;
   }
 }
 
@@ -568,21 +661,36 @@ function updateHeader(userid, firstname) {
   const nav = document.getElementById('header-nav');
   if (!nav || !userid) return;
 
-  const name = (firstname || 'User').replace(/[<>"'&]/g, '');
-  const initial = name.charAt(0).toUpperCase();
+  const name = typeof firstname === 'string' && firstname.trim() ? firstname.trim() : 'User';
+  const initial = (name.charAt(0) || 'U').toUpperCase();
 
   // Keep the logo, only replace the right-side links
   const logo = nav.querySelector('.site-nav-logo');
-  const logoHTML = logo ? logo.outerHTML : '';
+  if (!logo) return;
 
-  nav.innerHTML =
-    logoHTML +
-    '<div class="nav-links">' +
-      '<span class="nav-greeting">Hi, ' + name + '</span>' +
-      '<span class="nav-avatar">' + initial + '</span>' +
-      '<a href="/my/" class="nav-link">My Courses</a>' +
-      '<a href="/login/logout.php" class="nav-link nav-link--logout">Log out</a>' +
-    '</div>';
+  const links = document.createElement('div');
+  links.className = 'nav-links';
+
+  const greeting = document.createElement('span');
+  greeting.className = 'nav-greeting';
+  greeting.textContent = `Hi, ${name}`;
+
+  const avatar = document.createElement('span');
+  avatar.className = 'nav-avatar';
+  avatar.textContent = initial;
+
+  const coursesLink = document.createElement('a');
+  coursesLink.href = '/my/';
+  coursesLink.className = 'nav-link';
+  coursesLink.textContent = 'My Courses';
+
+  const logoutLink = document.createElement('a');
+  logoutLink.href = '/login/logout.php';
+  logoutLink.className = 'nav-link nav-link--logout';
+  logoutLink.textContent = 'Log out';
+
+  links.append(greeting, avatar, coursesLink, logoutLink);
+  nav.replaceChildren(logo, links);
 }
 
 function updateCourseCardsProgress() {
@@ -591,7 +699,8 @@ function updateCourseCardsProgress() {
   Object.entries(courses).forEach(([id, course]) => {
     if (course.noCard || !course.stats) return; // skip non-card entries
     const progress = courseProgress[id] || 0;
-    const progressPercentage = Math.round((progress / course.stats.exercises) * 100);
+    const normalized = getSafeProgress(progress, course.stats.exercises);
+    const progressPercentage = getProgressPercentage(progress, course.stats.exercises);
 
     const card = cards[cardIndex];
     cardIndex++;
@@ -604,7 +713,7 @@ function updateCourseCardsProgress() {
       ?.querySelector('.stat-value');
 
     if (progressLabel) {
-      progressLabel.textContent = `${progress}/${course.stats.exercises}`;
+      progressLabel.textContent = `${normalized.progress}/${normalized.total}`;
     }
     if (progressBar) {
       progressBar.style.width = `${progressPercentage}%`;
@@ -636,6 +745,11 @@ function startTypewriter(elementId) {
   const el = document.getElementById(elementId);
   if (!el) return;
 
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = TYPEWRITER_MESSAGES[0].text;
+    return;
+  }
+
   // Build inner structure: [text node] [cursor span]
   // Cursor is always present in the DOM — no absolute positioning tricks
   el.innerHTML = '';
@@ -656,10 +770,6 @@ function startTypewriter(elementId) {
 
   function currentMsg() { return TYPEWRITER_MESSAGES[msgIndex]; }
   function currentText() { return currentMsg().text; }
-
-  function clearTimer() {
-    if (timer) { clearTimeout(timer); timer = null; }
-  }
 
   function showLink() {
     if (linkShown || !currentMsg().link) return;
@@ -718,22 +828,6 @@ function startTypewriter(elementId) {
 // INITIALIZATION
 // ============================================
 
-let particleSystem;
-
-document.addEventListener('DOMContentLoaded', () => {
-  renderCourseCards();
-  setupCopyableFooterItems();
-
-  fetchMoodleProgress().then(() => {
-    particleSystem = new ParticleSystem('hero-canvas');
-  });
-
-  startTypewriter('hero-tagline');
-});
-
-// -------------------------------
-// Copy-to-clipboard for footer
-// -------------------------------
 function copyTextToClipboard(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     return navigator.clipboard.writeText(text);
@@ -772,3 +866,99 @@ function setupCopyableFooterItems() {
   });
 }
 
+function setupDismissibleBanner() {
+  const banner = document.getElementById('new-design-banner');
+  if (!banner) return;
+
+  let dismissed = false;
+  try {
+    dismissed = localStorage.getItem(BANNER_STORAGE_KEY) === '1';
+  } catch (error) {
+    dismissed = false;
+  }
+
+  if (dismissed) {
+    banner.remove();
+    return;
+  }
+
+  const dismissButton = banner.querySelector('.banner-dismiss');
+  if (!dismissButton) return;
+
+  dismissButton.addEventListener('click', () => {
+    banner.remove();
+    try {
+      localStorage.setItem(BANNER_STORAGE_KEY, '1');
+    } catch (error) {
+      // Non-blocking for strict privacy modes.
+    }
+  });
+}
+
+function setupFooterRevealEffects() {
+  const footer = document.querySelector('.main-footer');
+  if (!footer) return;
+  const logo = document.getElementById('footer-logo');
+  const badges = Array.from(document.querySelectorAll('.footer-badge'));
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let lastIndex = -1;
+  let activated = false;
+
+  const pulse = () => {
+    if (badges.length === 0) return;
+    let index;
+    do {
+      index = Math.floor(Math.random() * badges.length);
+    } while (index === lastIndex && badges.length > 1);
+
+    lastIndex = index;
+    const badge = badges[index];
+    badge.classList.remove('is-pulsing');
+    void badge.offsetWidth;
+    badge.classList.add('is-pulsing');
+    badge.addEventListener('animationend', () => badge.classList.remove('is-pulsing'), { once: true });
+  };
+
+  const activate = () => {
+    if (activated) return;
+    activated = true;
+
+    if (logo) logo.classList.add('is-alive');
+    if (reduceMotion || badges.length === 0) return;
+
+    setTimeout(() => {
+      pulse();
+      setInterval(pulse, 10000);
+    }, 3000);
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    activate();
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    if (!entries[0]?.isIntersecting) return;
+    activate();
+    observer.disconnect();
+  }, { threshold: 0.35 });
+
+  observer.observe(footer);
+}
+
+let particleSystem;
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupDismissibleBanner();
+  setupFooterRevealEffects();
+  startTelemetryHud();
+
+  renderCourseCards();
+  setupCopyableFooterItems();
+  startTypewriter('hero-tagline');
+
+  fetchMoodleProgress().finally(() => {
+    particleSystem = new ParticleSystem('hero-canvas');
+  });
+});
