@@ -20,7 +20,14 @@
   --text-mid: #4b5563;
   --text-light: #6b7280;
   --text-muted-ui: #64748b;
+  --text-nav: #334155;
+  --text-nav-strong: #0f172a;
+  --text-inverse: #ffffff;
   --border: #e5e7eb;
+  --surface-page: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --type-subtle-size: 1.125rem;
+  --type-subtle-line: 1.45;
 
   /* Font Settings */
   font-family: var(--font-body, 'Inter', system-ui, sans-serif);
@@ -42,7 +49,7 @@
 body {
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: var(--surface-page);
 }
 
 /* New-design welcome banner */
@@ -108,7 +115,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   padding: 16px 2rem;
-  background: #f8fafc;
+  background: var(--surface-page);
 }
 
 .site-nav-logo {
@@ -135,7 +142,7 @@ h1 {
 }
 .nav-login:hover {
   background: var(--loc-blue, #3844FF);
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 /* Logged-in nav links group */
@@ -157,7 +164,7 @@ h1 {
   align-items: center;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #334155;
+  color: var(--text-nav);
   text-decoration: none;
   padding: 7px 16px;
   border-radius: 8px;
@@ -165,8 +172,8 @@ h1 {
   transition: background 0.15s, color 0.15s;
 }
 .nav-link:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--surface-hover);
+  color: var(--text-nav-strong);
 }
 
 .nav-link--logout {
@@ -176,7 +183,7 @@ h1 {
 }
 .nav-link--logout:hover {
   background: var(--loc-blue, #3844FF);
-  color: #fff;
+  color: var(--text-inverse);
 }
 
 /* ============================================
@@ -226,6 +233,9 @@ h1 {
     0 4px 2px rgba(255,255,255,1);
   letter-spacing: -0.02em;
   line-height: 1.1;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
 
 .hero-content p {
@@ -246,11 +256,11 @@ h1 {
 }
 
 .hero-tagline {
-  font-size: 1.35rem;
+  font-size: var(--type-subtle-size);
   font-weight: 400;
   color: var(--text-muted-ui);
-  letter-spacing: 0.01em;
-  line-height: 1.5;
+  letter-spacing: 0;
+  line-height: var(--type-subtle-line);
   text-align: center;
   min-height: 2rem;
   display: inline-flex;
@@ -286,8 +296,6 @@ h1 {
   color: inherit;
   font-weight: 400;
   text-decoration: none;
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 1px;
   opacity: 0.6;
   transition: opacity 0.3s ease;
 }
@@ -320,7 +328,8 @@ h1 {
 }
 
 .section-header p {
-  font-size: 1.125rem;
+  font-size: var(--type-subtle-size);
+  line-height: var(--type-subtle-line);
   opacity: 1;
   color: var(--text-muted-ui);
   margin: 0;
@@ -494,7 +503,7 @@ h1 {
   display: inline-block;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  color: white;
+  color: var(--text-inverse);
   text-decoration: none;
   font-weight: 600;
   text-align: center;
@@ -505,7 +514,7 @@ h1 {
 
 .course-btn:hover {
   opacity: 0.9;
-  color: white;
+  color: var(--text-inverse);
 }
 
 /* ============================================
@@ -910,7 +919,7 @@ h1 {
   left: 50%;
   transform: translateX(-50%) translateY(0);
   background: rgba(18,18,18,0.9);
-  color: #fff;
+  color: var(--text-inverse);
   padding: 6px 8px;
   border-radius: 6px;
   font-size: 12px;
