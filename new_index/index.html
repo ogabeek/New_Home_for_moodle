@@ -8,18 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=33">
+  <link rel="stylesheet" href="styles.css?v=36">
 </head>
 <body>
   <div class="app">
     <!-- Welcome banner -->
     <div class="new-design-banner" id="new-design-banner">
       <span>✨ Welcome to the new Leagues of Code experience — same platform, fresh look.</span>
-      <button onclick="this.parentElement.remove();localStorage.setItem('loc-banner-dismissed','1')" aria-label="Dismiss">&times;</button>
+      <button type="button" class="banner-dismiss" aria-label="Dismiss announcement">&times;</button>
     </div>
 
-    <!-- FPS / particle stats overlay -->
-    <div class="perf-stats" id="perf-stats"></div>
+    <!-- Inline telemetry -->
+    <div class="perf-stats" id="perf-stats" aria-label="System status">FPS: 0 | Particles: 0</div>
 
     <!-- Nav -->
     <nav class="site-nav" id="header-nav">
@@ -195,6 +195,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="footer-media"
+                aria-label="Leagues of Code on Instagram"
               >
                 <svg
                   width="18"
@@ -216,6 +217,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="footer-media"
+                aria-label="Harbour.Space on Instagram"
               >
                 <svg
                   width="18"
@@ -237,6 +239,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="footer-media"
+                aria-label="Harbour.Space on LinkedIn"
               >
                 <svg
                   width="18"
@@ -280,38 +283,6 @@
     </footer>
   </div>
 
-  <script src="script.js?v=24"></script>
-  <script>if(localStorage.getItem('loc-banner-dismissed'))document.getElementById('new-design-banner')?.remove();</script>
-  <script>
-    // Trigger logo "alive" jump once when footer scrolls into view
-    (function() {
-      const logo = document.getElementById('footer-logo');
-      if (!logo || !('IntersectionObserver' in window)) return;
-      const observer = new IntersectionObserver(function(entries) {
-        if (entries[0].isIntersecting) {
-          logo.classList.add('is-alive');
-          observer.disconnect(); // fire only once
-        }
-      }, { threshold: 0.8 });
-      observer.observe(logo);
-    })();
-  </script>
-  <script>
-    // Nudge a random badge every 10s
-    (function() {
-      const badges = Array.from(document.querySelectorAll('.footer-badge'));
-      let last = -1;
-      function pulse() {
-        let i; do { i = Math.floor(Math.random() * badges.length); } while (i === last && badges.length > 1);
-        last = i;
-        const b = badges[i];
-        b.classList.remove('is-pulsing');
-        void b.offsetWidth;
-        b.classList.add('is-pulsing');
-        b.addEventListener('animationend', () => b.classList.remove('is-pulsing'), { once: true });
-      }
-      setTimeout(() => { pulse(); setInterval(pulse, 10000); }, 3000);
-    })();
-  </script>
+  <script src="script.js?v=27"></script>
 </body>
 </html>
