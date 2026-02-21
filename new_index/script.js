@@ -662,7 +662,6 @@ function updateHeader(userid, firstname) {
   if (!nav || !userid) return;
 
   const name = typeof firstname === 'string' && firstname.trim() ? firstname.trim() : 'User';
-  const initial = (name.charAt(0) || 'U').toUpperCase();
 
   // Keep the logo, only replace the right-side links
   const logo = nav.querySelector('.site-nav-logo');
@@ -673,11 +672,7 @@ function updateHeader(userid, firstname) {
 
   const greeting = document.createElement('span');
   greeting.className = 'nav-greeting';
-  greeting.textContent = `Hi, ${name}`;
-
-  const avatar = document.createElement('span');
-  avatar.className = 'nav-avatar';
-  avatar.textContent = initial;
+  greeting.textContent = `👋 Hi, ${name}`;
 
   const coursesLink = document.createElement('a');
   coursesLink.href = '/my/';
@@ -689,7 +684,7 @@ function updateHeader(userid, firstname) {
   logoutLink.className = 'nav-link nav-link--logout';
   logoutLink.textContent = 'Log out';
 
-  links.append(greeting, avatar, coursesLink, logoutLink);
+  links.append(greeting, coursesLink, logoutLink);
   nav.replaceChildren(logo, links);
 }
 
@@ -762,14 +757,40 @@ function startTypewriter(elementId) {
   el.appendChild(textEl);
   el.appendChild(cursor);
 
+  const CURSOR_PREBLINK_MS = 1200;
+  const INTER_MESSAGE_DELAY_MS = 1400;
+  const MAX_FULL_ROTATIONS = 2;
   let msgIndex = 0;
   let charIndex = 0;
   let erasing = false;
   let timer = null;
   let linkShown = false;
+  let completedRotations = 0;
+  let stopped = false;
 
   function currentMsg() { return TYPEWRITER_MESSAGES[msgIndex]; }
   function currentText() { return currentMsg().text; }
+
+  function showCursor() {
+    cursor.classList.remove('is-preblink');
+    cursor.style.opacity = '0.28';
+  }
+
+  function hideCursor() {
+    cursor.classList.remove('is-preblink');
+    cursor.style.opacity = '0';
+  }
+
+  function preBlinkCursorThen(next) {
+    cursor.classList.remove('is-preblink');
+    void cursor.offsetWidth;
+    cursor.style.opacity = '0.55';
+    cursor.classList.add('is-preblink');
+    timer = setTimeout(() => {
+      showCursor();
+      next();
+    }, CURSOR_PREBLINK_MS);
+  }
 
   function showLink() {
     if (linkShown || !currentMsg().link) return;
@@ -794,12 +815,19 @@ function startTypewriter(elementId) {
   }
 
   function type() {
+    if (stopped) return;
+    showCursor();
+
     if (!erasing) {
       charIndex++;
       textEl.textContent = currentText().slice(0, charIndex);
       if (charIndex === currentText().length) {
         showLink();
-        timer = setTimeout(() => { erasing = true; tick(); }, currentMsg().pauseEnd);
+        hideCursor();
+        timer = setTimeout(() => {
+          erasing = true;
+          preBlinkCursorThen(tick);
+        }, currentMsg().pauseEnd);
         return;
       }
     } else {
@@ -807,9 +835,20 @@ function startTypewriter(elementId) {
       charIndex--;
       textEl.textContent = currentText().slice(0, charIndex);
       if (charIndex === 0) {
+        const wasLastMessage = msgIndex === TYPEWRITER_MESSAGES.length - 1;
+        if (wasLastMessage) {
+          completedRotations += 1;
+        }
+        if (completedRotations >= MAX_FULL_ROTATIONS) {
+          hideCursor();
+          textEl.textContent = '';
+          stopped = true;
+          return;
+        }
+
         msgIndex = (msgIndex + 1) % TYPEWRITER_MESSAGES.length;
         erasing = false;
-        timer = setTimeout(tick, 420);
+        timer = setTimeout(tick, INTER_MESSAGE_DELAY_MS);
         return;
       }
     }
