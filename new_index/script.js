@@ -120,33 +120,11 @@ function getProgressPercentage(progress, total) {
   return clamp(Math.round((normalized.progress / normalized.total) * 100), 0, 100);
 }
 
-function getApiStatusLabel(status) {
-  if (status === 'online') return 'ONLINE';
-  if (status === 'syncing') return 'SYNCING';
-  if (status === 'degraded') return 'DEGRADED';
-  return 'IDLE';
-}
-
-function formatLastSync(lastSyncAt) {
-  if (!lastSyncAt) return 'Waiting';
-  const ageSeconds = Math.max(0, Math.floor((Date.now() - lastSyncAt) / 1000));
-  if (ageSeconds < 3) return 'Just now';
-  if (ageSeconds < 60) return `${ageSeconds}s ago`;
-  if (ageSeconds < 3600) return `${Math.floor(ageSeconds / 60)}m ago`;
-  return `${Math.floor(ageSeconds / 3600)}h ago`;
-}
-
 function renderTelemetryHud() {
   const statsEl = document.getElementById('perf-stats');
   if (!statsEl) return;
 
-  const base = `FPS: ${telemetryState.fps || 0} | Particles: ${telemetryState.particles || 0}`;
-  if (telemetryState.apiStatus === 'idle') {
-    statsEl.textContent = base;
-    return;
-  }
-
-  statsEl.textContent = `${base} | API: ${getApiStatusLabel(telemetryState.apiStatus)} | Sync: ${formatLastSync(telemetryState.lastSyncAt)}`;
+  statsEl.textContent = `FPS: ${telemetryState.fps || 0} | Particles: ${telemetryState.particles || 0}`;
 }
 
 function setTelemetryApiStatus(status) {
