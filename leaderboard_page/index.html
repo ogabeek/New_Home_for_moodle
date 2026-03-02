@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RANKUP — Competitive Leaderboard</title>
+  <title>League of Code — Competitive Leaderboard</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -19,10 +19,6 @@
         <span class="logo-text">Leagues of Code</span>
       </a>
     </div>
-    <nav class="tabs">
-      <button class="tab active" data-tab="students">Students</button>
-      <button class="tab" data-tab="schools">Schools</button>
-    </nav>
     <div class="header-right">
       <div class="user-pill" id="userPill">
         <div class="avatar-dot"></div>
@@ -55,37 +51,26 @@
     <section id="tab-students" class="tab-section active">
       <div class="section-header">
         <h1>Student Rankings</h1>
+        <div class="section-controls">
+          <div class="select-wrap">
+            <select id="groupFilter">
+              <option value="all">All Groups</option>
+            </select>
+            <svg class="select-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
         <div class="total-count" id="studentCount">— students</div>
       </div>
       <div class="board-container">
         <div class="board-header-row">
           <span class="col-rank">#</span>
           <span class="col-name">Student</span>
-          <span class="col-school">School</span>
-          <span class="col-solved">Solved</span>
-          <span class="col-xp">XP</span>
+          <span class="col-group">Group</span>
+          <span class="col-progress">Progress</span>
+          <span class="col-total">Total Solved</span>
         </div>
         <div id="studentBoard"></div>
         <div class="pagination" id="studentPagination"></div>
-      </div>
-    </section>
-
-    <!-- SCHOOLS TAB -->
-    <section id="tab-schools" class="tab-section">
-      <div class="section-header">
-        <h1>School Rankings</h1>
-        <div class="live-badge">● LIVE</div>
-        <div class="total-count" id="schoolCount">— schools</div>
-      </div>
-      <div class="board-container">
-        <div class="board-header-row schools-header">
-          <span class="col-rank">#</span>
-          <span class="col-name">School</span>
-          <span class="col-members">Members</span>
-          <span class="col-solved">Total Solved</span>
-          <span class="col-xp">Total XP</span>
-        </div>
-        <div id="schoolBoard"></div>
       </div>
     </section>
 
@@ -93,6 +78,8 @@
 
   <!-- Floating tooltip for heatmap -->
   <div class="hm-tooltip" id="hmTooltip"></div>
+  <!-- Floating tooltip for progress bar segments -->
+  <div class="prog-tooltip" id="progTooltip"></div>
 
   <!-- Login modal -->
   <div class="modal-overlay" id="loginModal">
