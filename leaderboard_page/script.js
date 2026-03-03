@@ -153,7 +153,7 @@ function setUser(user) {
 let studentsData = [];   // enriched, sorted full list
 let filteredData = [];   // after group filter
 let currentPage  = 1;
-const PAGE_SIZE  = 10;
+const PAGE_SIZE  = 30;
 let activeGroup  = 'all';
 
 async function loadStudents() {
@@ -242,6 +242,13 @@ function renderPage(page) {
     const p    = getPalette(student.id);
     const gp   = groupColor(student.group);
     const tier = getMedalTier(rank, total); // null | 'gold' | 'silver' | 'bronze'
+    let rankMedal = '';
+    if(tier == 'gold')
+      rankMedal = ' 🥇';
+    else if(tier == 'silver')
+      rankMedal = ' 🥈';
+    else if(tier == 'bronze')
+      rankMedal = ' 🥉';
 
     const row = document.createElement('div');
     let cls = 'board-row';
@@ -251,7 +258,7 @@ function renderPage(page) {
     row.className = cls;
     row.style.animationDelay = `${animDelay}ms`;
 
-    const rankHtml = `<span class="rank-num${tier ? ` tier-${tier}` : ''}">${rank}</span>`;
+    const rankHtml = `<span class="rank-num${tier ? ` tier-${tier}` : ''}">${rank}${rankMedal}</span>`;
 
     const progressPct = TOTAL_PROBLEMS > 0
       ? Math.round(student.totalSolved / TOTAL_PROBLEMS * 100)
@@ -275,7 +282,6 @@ function renderPage(page) {
           <div class="student-avatar" style="color:${p.color};background:${p.bg};border-color:${p.border}">${initials(student.name)}</div>
           <div>
             <div class="student-name${isMe ? ' is-me' : ''}">${student.name}${isMe ? ' <span class="you-tag">[you]</span>' : ''}</div>
-            <div class="student-handle">@${student.handle}</div>
           </div>
         </div>
       </div>
@@ -285,7 +291,6 @@ function renderPage(page) {
       <div class="col-progress">
         <div class="prog-wrap">
           <div class="prog-bar-bg"><div class="prog-bar-inner">${segments}</div></div>
-          <span class="prog-pct">${progressPct}%</span>
         </div>
         <div class="prog-legend">${legend}</div>
       </div>
@@ -526,8 +531,77 @@ function buildDemoUsers(students) {
 }
 
 // ═════════════════════════════════════════════
-// INIT
+// ONLINE USERS
 // ═════════════════════════════════════════════
+
+const ONLINE_SEEDS = [
+  { id: 1,  joinedMinsAgo: 2  },
+  { id: 3,  joinedMinsAgo: 7  },
+  { id: 6,  joinedMinsAgo: 14 },
+  { id: 9,  joinedMinsAgo: 23 },
+  { id: 11, joinedMinsAgo: 31 },
+  { id: 14, joinedMinsAgo: 45 },
+  { id: 17, joinedMinsAgo: 58 },
+];
+
+let onlineUsers = [];   // { student, joinedAt: Date }
+let onlineTimer = null;
+
+function fmtOnlineTime(joinedAt) {
+  const secs = Math.floor((Date.now() - joinedAt) / 1000);
+  if (secs < 60)  return `${secs}s`;
+  const mins = Math.floor(secs / 60);
+  if (mins < 60)  return `${mins}m`;
+  return `${Math.floor(mins / 60)}h ${mins % 60}m`;
+}
+
+function renderOnlineUsers() {
+  const list  = document.getElementById('onlineUsersList');
+  const count = document.getElementById('onlineCount');
+  if (!list) return;
+
+  count.textContent = onlineUsers.length;
+  list.innerHTML = '';
+
+  onlineUsers.forEach(({ student, joinedAt }) => {
+    const p = getPalette(student.id);
+    const card = document.createElement('div');
+    card.className = 'online-user-card';
+    card.innerHTML = `
+      <div class="online-avatar" style="color:${p.color};background:${p.bg};border-color:${p.border}">
+        ${initials(student.name)}
+      </div>
+      <div class="online-info">
+        <span class="online-name">${student.name}</span>
+      </div>
+      <div class="online-duration" data-joined="${joinedAt}">${fmtOnlineTime(joinedAt)}</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function initOnlineUsers() {
+  if (!studentsData.length) return;
+  const now = Date.now();
+  onlineUsers = ONLINE_SEEDS
+    .map(seed => {
+      const student = studentsData.find(s => s.id === seed.id);
+      return student ? { student, joinedAt: now - seed.joinedMinsAgo * 60 * 1000 } : null;
+    })
+    .filter(Boolean);
+
+  renderOnlineUsers();
+
+  // Update durations every 30s
+  if (onlineTimer) clearInterval(onlineTimer);
+  onlineTimer = setInterval(() => {
+    document.querySelectorAll('.online-duration[data-joined]').forEach(el => {
+      el.textContent = fmtOnlineTime(Number(el.dataset.joined));
+    });
+  }, 30_000);
+}
+
+
 
 (async () => {
   document.getElementById('userPill').style.display = 'none';
@@ -535,4 +609,5 @@ function buildDemoUsers(students) {
 
   await loadStudents();
   buildDemoUsers(studentsData);
+  initOnlineUsers();
 })();
