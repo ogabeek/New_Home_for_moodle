@@ -66,6 +66,137 @@ async function fetchLeaderboard() {
     { id: 18, name: 'Iryna Kravchuk',     handle: 'iryna_k',   group: 'Ukraine',        progress: { python1:  8, python2:  4, math101:  2 } },
     { id: 19, name: 'Tom Wierzbicki',     handle: 'tomwi',     group: 'League of Code', progress: { python1:  6, python2:  2, math101:  0 } },
     { id: 20, name: 'Rina Suzuki',        handle: 'rina_sz',   group: 'League of Code', progress: { python1:  4, python2:  0, math101:  0 } },
+    { id:  21, name: 'Kateryna Bondar', handle: 'kbondar', group: 'Ukraine', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  22, name: 'David Ramírez', handle: 'dramirez', group: 'Spain', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  23, name: 'Babajide Adeyemi', handle: 'badeyemi', group: 'Harbour', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  24, name: 'Bailey Jackson', handle: 'bjackson', group: 'League of Code', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  25, name: 'Lesia Sydorenko', handle: 'lsydorenko', group: 'Ukraine', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  26, name: 'Fernando Reyes', handle: 'freyes', group: 'Spain', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  27, name: 'Zara Ihejirika', handle: 'zihejirika', group: 'Harbour', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  28, name: 'Parker Lewis', handle: 'plewis', group: 'League of Code', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  29, name: 'Daria Chernysh', handle: 'dchernysh', group: 'Ukraine', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  30, name: 'Helena Herrera', handle: 'hherrera', group: 'Spain', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  31, name: 'Hauwa Usman', handle: 'husman', group: 'Harbour', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  32, name: 'Devon Robinson', handle: 'drobinson', group: 'League of Code', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  33, name: 'Andrii Moroz', handle: 'amoroz', group: 'Ukraine', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  34, name: 'Adrián Castro', handle: 'acastro', group: 'Spain', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  35, name: 'Fatima Mensah', handle: 'fmensah', group: 'Harbour', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  36, name: 'Bailey King', handle: 'bking', group: 'League of Code', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  37, name: 'Roksolana Boyko', handle: 'rboyko', group: 'Ukraine', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  38, name: 'Julia Navarro', handle: 'jnavarro', group: 'Spain', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  39, name: 'Makena Owusu', handle: 'mowusu', group: 'Harbour', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  40, name: 'Bailey Young', handle: 'byoung', group: 'League of Code', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  41, name: 'Hanna Moroz', handle: 'hmoroz', group: 'Ukraine', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  42, name: 'Carmen Romero', handle: 'cromero', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  43, name: 'Ahmed Sow', handle: 'asow', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  44, name: 'Sage Wright', handle: 'swright', group: 'League of Code', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  45, name: 'Kateryna Vasylenko', handle: 'kvasylenko', group: 'Ukraine', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  46, name: 'Lara Delgado', handle: 'ldelgado', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  47, name: 'Yewande Traore', handle: 'ytraore', group: 'Harbour', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  48, name: 'Nico Evans', handle: 'nevans', group: 'League of Code', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  49, name: 'Zoriana Kovalchuk', handle: 'zkovalchuk', group: 'Ukraine', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  50, name: 'Eduardo Vega', handle: 'evega', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  51, name: 'Aisha Amara', handle: 'aamara', group: 'Harbour', progress: { python1: 3, python2: 2, math101: 1 } },
+    { id:  52, name: 'Logan Lee', handle: 'llee', group: 'League of Code', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  53, name: 'Halyna Zaichenko', handle: 'hzaichenko', group: 'Ukraine', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  54, name: 'Eduardo Díaz', handle: 'ediaz', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  55, name: 'Ibrahim Obi', handle: 'iobi', group: 'Harbour', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  56, name: 'Blake Parker', handle: 'bparker', group: 'League of Code', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  57, name: 'Andrii Ponomarenko', handle: 'aponomaren', group: 'Ukraine', progress: { python1: 3, python2: 1, math101: 1 } },
+    { id:  58, name: 'Carmen González', handle: 'cgonzalez', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  59, name: 'Aisha Akinwale', handle: 'aakinwale', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  60, name: 'Hayden Clarke', handle: 'hclarke', group: 'League of Code', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  61, name: 'Petro Shevchuk', handle: 'pshevchuk', group: 'Ukraine', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  62, name: 'Rafael Flores', handle: 'rflores', group: 'Spain', progress: { python1: 2, python2: 2, math101: 0 } },
+    { id:  63, name: 'Damilola Sow', handle: 'dsow', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  64, name: 'Sage Moore', handle: 'smoore', group: 'League of Code', progress: { python1: 2, python2: 2, math101: 0 } },
+    { id:  65, name: 'Hanna Zaichenko', handle: 'hzaichenko65', group: 'Ukraine', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  66, name: 'Gloria Muñoz', handle: 'gmunoz', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  67, name: 'Hauwa Akinwale', handle: 'hakinwale', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  68, name: 'Jamie Williams', handle: 'jwilliams', group: 'League of Code', progress: { python1: 2, python2: 2, math101: 1 } },
+    { id:  69, name: 'Serhiy Hrytsenko', handle: 'shrytsenko', group: 'Ukraine', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  70, name: 'Ignacio Álvarez', handle: 'ialvarez', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  71, name: 'Efua Mensah', handle: 'emensah', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  72, name: 'Lane Lee', handle: 'llee72', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 1 } },
+    { id:  73, name: 'Vladyslav Zaichenko', handle: 'vzaichenko', group: 'Ukraine', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  74, name: 'Víctor Morales', handle: 'vmorales', group: 'Spain', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  75, name: 'Rania Akinwale', handle: 'rakinwale', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  76, name: 'Marlowe Smith', handle: 'msmith', group: 'League of Code', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  77, name: 'Vladyslav Tkachenko', handle: 'vtkachenko', group: 'Ukraine', progress: { python1: 1, python2: 1, math101: 1 } },
+    { id:  78, name: 'Víctor Moreno', handle: 'vmoreno', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  79, name: 'Kofi Fakoya', handle: 'kfakoya', group: 'Harbour', progress: { python1: 1, python2: 1, math101: 1 } },
+    { id:  80, name: 'Cameron Lee', handle: 'clee', group: 'League of Code', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  81, name: 'Viktor Danyliuk', handle: 'vdanyliuk', group: 'Ukraine', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  82, name: 'Julia Herrera', handle: 'jherrera', group: 'Spain', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  83, name: 'Fatima Kamara', handle: 'fkamara', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  84, name: 'Jamie Wright', handle: 'jwright', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  85, name: 'Ivan Fedorenko', handle: 'ifedorenko', group: 'Ukraine', progress: { python1: 1, python2: 1, math101: 1 } },
+    { id:  86, name: 'Elena Gil', handle: 'egil', group: 'Spain', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  87, name: 'Wanjiru Owusu', handle: 'wowusu', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  88, name: 'Nico Clarke', handle: 'nclarke', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  89, name: 'Oleksandr Marchenko', handle: 'omarchenko', group: 'Ukraine', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  90, name: 'Diana Martínez', handle: 'dmartinez', group: 'Spain', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  91, name: 'Chioma Tanko', handle: 'ctanko', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  92, name: 'Casey Hall', handle: 'chall', group: 'League of Code', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id:  93, name: 'Bohdan Moroz', handle: 'bmoroz', group: 'Ukraine', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  94, name: 'Eduardo Muñoz', handle: 'emunoz', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  95, name: 'Emeka Fakoya', handle: 'efakoya', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id:  96, name: 'Indigo Robinson', handle: 'irobinson', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id:  97, name: 'Ihor Vasylenko', handle: 'ivasylenko', group: 'Ukraine', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id:  98, name: 'Francisca Reyes', handle: 'freyes98', group: 'Spain', progress: { python1: 1, python2: 1, math101: 1 } },
+    { id:  99, name: 'Hauwa Eze', handle: 'heze', group: 'Harbour', progress: { python1: 2, python2: 1, math101: 0 } },
+    { id: 100, name: 'Finley Parker', handle: 'fparker', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 101, name: 'Tetiana Chernysh', handle: 'tchernysh', group: 'Ukraine', progress: { python1: 2, python2: 0, math101: 0 } },
+    { id: 102, name: 'Natalia Ramírez', handle: 'nramirez', group: 'Spain', progress: { python1: 2, python2: 1, math101: 1 } },
+    { id: 103, name: 'Damilola Garba', handle: 'dgarba', group: 'Harbour', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 104, name: 'Devon Taylor', handle: 'dtaylor', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 105, name: 'Oleh Danyliuk', handle: 'odanyliuk', group: 'Ukraine', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 106, name: 'César López', handle: 'clopez', group: 'Spain', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 107, name: 'Yewande Lawal', handle: 'ylawal', group: 'Harbour', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 108, name: 'Alex Evans', handle: 'aevans', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 109, name: 'Vitaliy Savchenko', handle: 'vsavchenko', group: 'Ukraine', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 110, name: 'Javier Muñoz', handle: 'jmunoz', group: 'Spain', progress: { python1: 1, python2: 0, math101: 1 } },
+    { id: 111, name: 'Wanjiru Traore', handle: 'wtraore', group: 'Harbour', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 112, name: 'Bailey Anderson', handle: 'banderson', group: 'League of Code', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 113, name: 'Zoriana Tymoshenko', handle: 'ztymoshenk', group: 'Ukraine', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 114, name: 'Sara Morales', handle: 'smorales', group: 'Spain', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 115, name: 'Xolani Kamara', handle: 'xkamara', group: 'Harbour', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 116, name: 'Morgan Moore', handle: 'mmoore', group: 'League of Code', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 117, name: 'Anastasia Boyko', handle: 'aboyko', group: 'Ukraine', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 118, name: 'Carmen Martínez', handle: 'cmartinez', group: 'Spain', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 119, name: 'Uche Ihejirika', handle: 'uihejirika', group: 'Harbour', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 120, name: 'Hayden Wilson', handle: 'hwilson', group: 'League of Code', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 121, name: 'Polina Ponomarenko', handle: 'pponomaren', group: 'Ukraine', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 122, name: 'Pilar Díaz', handle: 'pdiaz', group: 'Spain', progress: { python1: 1, python2: 0, math101: 1 } },
+    { id: 123, name: 'Seun Okafor', handle: 'sokafor', group: 'Harbour', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 124, name: 'Emerson Hughes', handle: 'ehughes', group: 'League of Code', progress: { python1: 1, python2: 1, math101: 0 } },
+    { id: 125, name: 'Mykola Zaichenko', handle: 'mzaichenko', group: 'Ukraine', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 126, name: 'Guillermo Pérez', handle: 'gperez', group: 'Spain', progress: { python1: 0, python2: 1, math101: 0 } },
+    { id: 127, name: 'Hauwa Garba', handle: 'hgarba', group: 'Harbour', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 128, name: 'Quinn Foster', handle: 'qfoster', group: 'League of Code', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 129, name: 'Daria Yatsenko', handle: 'dyatsenko', group: 'Ukraine', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 130, name: 'Lara Muñoz', handle: 'lmunoz', group: 'Spain', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 131, name: 'Makena Usman', handle: 'musman', group: 'Harbour', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 132, name: 'Riley Brooks', handle: 'rbrooks', group: 'League of Code', progress: { python1: 0, python2: 1, math101: 0 } },
+    { id: 133, name: 'Daria Oliynyk', handle: 'doliynyk', group: 'Ukraine', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 134, name: 'Ignacio Flores', handle: 'iflores', group: 'Spain', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 135, name: 'Makena Ihejirika', handle: 'mihejirika', group: 'Harbour', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 136, name: 'Nico Green', handle: 'ngreen', group: 'League of Code', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 137, name: 'Halyna Tymoshenko', handle: 'htymoshenk', group: 'Ukraine', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 138, name: 'Natalia González', handle: 'ngonzalez', group: 'Spain', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 139, name: 'Ibrahim Usman', handle: 'iusman', group: 'Harbour', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 140, name: 'Alex Young', handle: 'ayoung', group: 'League of Code', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 141, name: 'Bohdan Zinchenko', handle: 'bzinchenko', group: 'Ukraine', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 142, name: 'Hugo Díaz', handle: 'hdiaz', group: 'Spain', progress: { python1: 1, python2: 0, math101: 0 } },
+    { id: 143, name: 'Xolani Garba', handle: 'xgarba', group: 'Harbour', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 144, name: 'Indigo Harris', handle: 'iharris', group: 'League of Code', progress: { python1: 0, python2: 0, math101: 0 } },
+    // --- bottom feeders ---
+    { id: 145, name: 'Matteo Ricci', handle: 'mricci', group: 'League of Code', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 146, name: 'Nkechi Osei', handle: 'nkosei', group: 'Harbour', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 147, name: 'Álvaro Fuentes', handle: 'afuentes', group: 'Spain', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 148, name: 'Viktor Vasylenko', handle: 'vvasylenko', group: 'Ukraine', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 149, name: 'Sam Whitfield', handle: 'swhitfield', group: 'League of Code', progress: { python1: 0, python2: 0, math101: 0 } },
+    { id: 150, name: 'César Díaz', handle: 'cdiaz', group: 'Spain', progress: { python1: 0, python2: 0, math101: 0 } },
   ];
 }
 
@@ -119,13 +250,13 @@ const AVATAR_PALETTE = [
 function getPalette(id) { return AVATAR_PALETTE[(id - 1) % AVATAR_PALETTE.length]; }
 
 const GROUP_COLORS = {
-  'Ukraine':        { color: '#3D52FA', bg: 'rgba(61,82,250,0.08)',   border: 'rgba(61,82,250,0.22)'   },
-  'Spain':          { color: '#e03fa8', bg: 'rgba(224,63,168,0.08)',  border: 'rgba(224,63,168,0.22)'  },
-  'Harbour':        { color: '#0ea5e9', bg: 'rgba(14,165,233,0.08)',  border: 'rgba(14,165,233,0.22)'  },
-  'League of Code': { color: '#22c55e', bg: 'rgba(34,197,94,0.08)',   border: 'rgba(34,197,94,0.22)'   },
+  'Ukraine':        { color: 'rgba(59,130,246,1)',  bg: 'rgba(59,130,246,0.08)',  border: 'rgba(59,130,246,0.28)'  },  // blue
+  'Spain':          { color: 'rgba(245,158,11,1)',  bg: 'rgba(245,158,11,0.08)',  border: 'rgba(245,158,11,0.28)'  },  // orange
+  'Harbour':        { color: 'rgba(6,182,212,1)',   bg: 'rgba(6,182,212,0.08)',   border: 'rgba(6,182,212,0.28)'   },  // cyan
+  'League of Code': { color: 'rgba(16,185,129,1)',  bg: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.28)'  },  // green
 };
 function groupColor(name) {
-  return GROUP_COLORS[name] || { color: '#aaa', bg: 'rgba(180,180,180,0.08)', border: 'rgba(180,180,180,0.22)' };
+  return GROUP_COLORS[name] || { color: 'rgba(107,114,128,1)', bg: 'rgba(107,114,128,0.08)', border: 'rgba(107,114,128,0.28)' };  // grey
 }
 
 // ═════════════════════════════════════════════
@@ -211,27 +342,19 @@ function renderPage(page) {
     const pageEnd  = start + pageSlice.length - 1;
 
     if (myIndex < start) {
-      // User ranks BETTER than this page → pin at top
+      // User ranks BETTER than this page → pin user + neighbours at top
       extraTop = [];
       if (myIndex > 0) extraTop.push({ idx: myIndex - 1, isMe: false, dim: true });
       extraTop.push({ idx: myIndex, isMe: true, dim: false });
-      if (myIndex + 1 < total && !pageSet.has(myIndex + 1))
-        extraTop.push({ idx: myIndex + 1, isMe: false, dim: true });
+      if (myIndex + 1 < total) extraTop.push({ idx: myIndex + 1, isMe: false, dim: true });
     } else if (myIndex > pageEnd) {
-      // User ranks WORSE than this page → pin at bottom
+      // User ranks WORSE than this page → pin user + neighbours at bottom
       extraBottom = [];
-      if (myIndex > 0 && !pageSet.has(myIndex - 1))
-        extraBottom.push({ idx: myIndex - 1, isMe: false, dim: true });
+      if (myIndex > 0) extraBottom.push({ idx: myIndex - 1, isMe: false, dim: true });
       extraBottom.push({ idx: myIndex, isMe: true, dim: false });
-      if (myIndex + 1 < total)
-        extraBottom.push({ idx: myIndex + 1, isMe: false, dim: true });
-    } else {
-      // User IS on this page — inject out-of-page neighbours
-      if (myIndex > 0 && myIndex - 1 < start)
-        extraTop = [{ idx: myIndex - 1, isMe: false, dim: true }];
-      if (myIndex + 1 < total && myIndex + 1 > pageEnd)
-        extraBottom = [{ idx: myIndex + 1, isMe: false, dim: true }];
+      if (myIndex + 1 < total) extraBottom.push({ idx: myIndex + 1, isMe: false, dim: true });
     }
+    // User IS on this page → no extra rows, no divider
   }
 
   const container = document.getElementById('studentBoard');
@@ -264,8 +387,9 @@ function renderPage(page) {
       ? Math.round(student.totalSolved / TOTAL_PROBLEMS * 100)
       : 0;
 
+    const maxSolved = Math.max(1, ...student.courses.map(c => c.solved));
     const segments = student.courses.map(c => {
-      const w = TOTAL_PROBLEMS > 0 ? (c.solved / TOTAL_PROBLEMS * 100).toFixed(2) : 0;
+      const w = c.solved > 0 ? (c.solved / maxSolved * 100).toFixed(2) : 0;
       return `<div class="prog-seg" style="width:${w}%;background:${c.color};"
         data-name="${c.name}" data-solved="${c.solved}" data-total="${c.total}"></div>`;
     }).join('');
@@ -302,6 +426,9 @@ function renderPage(page) {
   const makeDivider = () => {
     const d = document.createElement('div');
     d.className = 'context-divider';
+    const s = document.createElement('span');
+    s.textContent = 'YOU';
+    d.appendChild(s);
     container.appendChild(d);
   };
 
@@ -513,7 +640,7 @@ logoutBtn.addEventListener('click', () => setUser(null));
 
 function buildDemoUsers(students) {
   demoUsersEl.innerHTML = '';
-  students.slice(0, 5).forEach(s => {
+  [students[0], students[5], students[30], students[65], students[120]].forEach(s => {
     const p = getPalette(s.id);
     const btn = document.createElement('button');
     btn.className = 'demo-user-btn';
@@ -535,13 +662,24 @@ function buildDemoUsers(students) {
 // ═════════════════════════════════════════════
 
 const ONLINE_SEEDS = [
-  { id: 1,  joinedMinsAgo: 2  },
-  { id: 3,  joinedMinsAgo: 7  },
-  { id: 6,  joinedMinsAgo: 14 },
-  { id: 9,  joinedMinsAgo: 23 },
-  { id: 11, joinedMinsAgo: 31 },
-  { id: 14, joinedMinsAgo: 45 },
-  { id: 17, joinedMinsAgo: 58 },
+  { id:  1, joinedMinsAgo:  2 },
+  { id:  3, joinedMinsAgo:  5 },
+  { id:  6, joinedMinsAgo:  9 },
+  { id:  9, joinedMinsAgo: 14 },
+  { id: 11, joinedMinsAgo: 18 },
+  { id: 14, joinedMinsAgo: 23 },
+  { id: 17, joinedMinsAgo: 29 },
+  { id: 22, joinedMinsAgo: 33 },
+  { id: 25, joinedMinsAgo: 37 },
+  { id: 28, joinedMinsAgo: 41 },
+  { id: 31, joinedMinsAgo: 46 },
+  { id: 35, joinedMinsAgo: 50 },
+  { id: 40, joinedMinsAgo: 54 },
+  { id: 45, joinedMinsAgo: 59 },
+  { id: 52, joinedMinsAgo: 63 },
+  { id: 58, joinedMinsAgo: 68 },
+  { id: 63, joinedMinsAgo: 74 },
+  { id: 71, joinedMinsAgo: 81 },
 ];
 
 let onlineUsers = [];   // { student, joinedAt: Date }
